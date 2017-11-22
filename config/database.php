@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'pgsql'),
+    'default' => env('DB_CONNECTION', 'pg-heroku'),
 
     /*
     |--------------------------------------------------------------------------
@@ -32,6 +32,18 @@ return [
     */
 
     'connections' => [
+
+      'pg-heroku' => [
+	    'driver' => 'pgsql',
+	    'host' => 'ec2-23-23-228-115.compute-1.amazonaws.com',
+	    'database' => 'dfhaus4el067dj',
+	    'username' => 'zntizgxlhzttsm',
+	    'password' => 'd3d09dc19a124d1338db961b8bb819de8c73564eb612f7db5e839bb2d1977f36',
+	    'charset' => 'utf8',
+	    'prefix' => '',
+	    'schema' => 'public',
+	],
+
 
         'sqlite' => [
             'driver' => 'sqlite',

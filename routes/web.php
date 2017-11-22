@@ -11,6 +11,16 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', 'HomeController@index');
+
+Route::get('/manageCourses', function () {
+	return view('manageCourses');
 });
+
+Route::get('/manageFriends', function () {
+	return view('manageFriends');
+});
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
