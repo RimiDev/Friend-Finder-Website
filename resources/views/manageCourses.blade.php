@@ -4,12 +4,9 @@
 
 @section('content')
 <div class="container">
-  <h1> Welcome to Dawson Friend Finder 2017 </h1>
+  <h1> Manage courses </h1>
   <div class="navbar-header">
-    <!--Side bar nav-->
-    <ul class="nav navbar-nav">
-        @include('includes.header')
-    </ul>
+    @include('includes.header')
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">

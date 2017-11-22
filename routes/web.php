@@ -13,8 +13,12 @@
 
 Route::get('/', 'HomeController@index');
 
-Route::get('/courses', function () {
-	return view('courses');
+Route::get('/manageCourses', function () {
+	return view('manageCourses');
+});
+
+Route::get('/manageFriends', function () {
+	return view('manageFriends');
 });
 
 Auth::routes();
