@@ -14,16 +14,14 @@
 
     <!-- Styles -->
     <style>
-
-        #block {
+        #block
+        {
             width: 50%;
             height: 75%;
             font-size: 25px;
             float: left;
         }
-
     </style>
-
 
 <body>
 @section('content')
@@ -32,8 +30,11 @@
         <div class="navbar-header">
             <!--Side bar nav-->
             <ul class="nav navbar-nav">
-                @include('includes.header')
+                <li><a href="/manageCourses">Manage Courses</a></li>
+                <li><a href="/manageFriends">Manage Friends</a></li>
+                <li><a href="/findFriendBreaks">Find Friend Breaks</a></li>
             </ul>
+        </div>
 
             <div class="row">
                 <div class="col-md-8 col-md-offset-2">
@@ -69,11 +70,7 @@
                     </div>
                 </div>
 
-            </div>
         </div>
 @endsection
-
 </body>
-
-
 </html>
