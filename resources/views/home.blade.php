@@ -11,18 +11,8 @@
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
-
-    <!-- Styles -->
-    <style>
-        #block
-        {
-            width: 50%;
-            height: 75%;
-            font-size: 25px;
-            float: left;
-        }
-    </style>
-
+    <link href="{{ asset('css/styles.css') }}" rel="stylesheet">
+</head>
 <body>
 @section('content')
     <div class="container">
