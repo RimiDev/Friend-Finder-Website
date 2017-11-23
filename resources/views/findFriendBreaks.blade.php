@@ -16,15 +16,16 @@
 <body>
 @section('content')
     <div class="container">
-        <h1> Manage Friends </h1>
+        <h1> Find Friend Breaks </h1>
         <div class="navbar-header">
             <!--Side bar nav-->
             <ul class="nav navbar-nav">
                 <li><a href="/">Home</a></li>
                 <li><a href="/manageCourses">Manage Courses</a></li>
-                <li><a href="/findFriendBreaks">Find Friend Breaks</a></li>
+                <li><a href="/manageFriends">Manage Friends</a></li>
             </ul>
         </div>
+
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
                 <div class="panel panel-default">
@@ -45,5 +46,5 @@
         </div>
     </div>
 </body>
-</html>>
+</html>
 @endsection

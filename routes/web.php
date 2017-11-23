@@ -21,6 +21,10 @@ Route::get('/manageFriends', function () {
 	return view('manageFriends');
 });
 
+Route::get('/findFriendBreaks', function () {
+    return view('findFriendBreaks');
+});
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
