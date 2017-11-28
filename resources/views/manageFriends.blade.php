@@ -50,10 +50,10 @@
                 <div class="panel-heading">
                     <form action="" method="post">
                         {{ csrf_field() }}
-                        <label>Search
+                        <label>Search for friends:
                             <input type="text" name="name">
                         </label>
-                        <input type="submit" name="submitFriendSearch">
+                        <input type="submit" name="submitFriendSearch" value="Search">
                     </form>
                 </div>
                 <div class="panel-body">
