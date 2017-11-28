@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
-        <!doctype html>
-<html lang="{{ app()->getLocale() }}">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -25,25 +24,56 @@
                 <li><a href="/findFriendBreaks">Find Friend Breaks</a></li>
             </ul>
         </div>
-        <div class="row">
-            <div class="col-md-8 col-md-offset-2">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                    </div>
+        <br/><br/><br/>
 
-                    <div class="panel-body">
-                        @if (session('status'))
-                            <div class="alert alert-success">
-                                {{ session('status') }}
-                            </div>
-                        @endif
+        <div id="block">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <p> Friends </p>
+                </div>
+                <div class="panel-body">
+                    <p>Friend1</p>
+                    <p>Friend2</p>
+                    <p>Friend3</p>
 
+                    @if (session('status'))
+                        <div class="alert alert-success">
+                            {{ session('status') }}
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
 
-                    </div>
+        <div id="block">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <form action="" method="post">
+                        {{ csrf_field() }}
+                        <label>Search
+                            <input type="text" name="name">
+                        </label>
+                        <input type="submit" name="submitFriendSearch">
+                    </form>
+                </div>
+                <div class="panel-body">
+                    @if(count($friends) > 0)
+                        @foreach($friends as $friend)
+                                {{ $friend->name}}
+                        @endforeach
+                        @else
+                            <p>No users with that name!</p>
+                    @endif
+
+                    @if (session('status'))
+                        <div class="alert alert-success">
+                            {{ session('status') }}
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
     </div>
+
 </body>
-</html>>
 @endsection
