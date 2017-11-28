@@ -57,9 +57,10 @@
                     </form>
                 </div>
                 <div class="panel-body">
-                    @if(count($friends) > 0)
+                    @if( isset($friends) && count($friends) > 0)
                         @foreach($friends as $friend)
                                 {{ $friend->name}}
+                                <br />
                         @endforeach
                         @else
                             <p>No users with that name!</p>
