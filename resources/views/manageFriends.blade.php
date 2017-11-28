@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Laravel</title>
+    <title>Manage Friends</title>
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
@@ -29,7 +29,7 @@
         <div id="block">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <p> Friends </p>
+                    <h3 id="boldText"> Friends </h3>
                 </div>
                 <div class="panel-body">
                     <p>Friend1</p>
@@ -50,20 +50,25 @@
                 <div class="panel-heading">
                     <form action="" method="post">
                         {{ csrf_field() }}
-                        <label>Search for friends:
-                            <input type="text" name="name">
-                        </label>
+                        <h3 id="boldText">Search for friends:</h3>
+                        <input id="textSearch" type="text" name="name">
                         <input type="submit" name="submitFriendSearch" value="Search">
                     </form>
                 </div>
                 <div class="panel-body">
                     @if( isset($friends) && count($friends) > 0)
                         @foreach($friends as $friend)
-                                {{ $friend->name}}
-                                <br />
+                            <form action="" method="post">
+                                {{ csrf_field() }}
+                                <h4 id="boldText">{{ $friend->name.' '.$friend->program}}
+                                    <button id="addButton" type="button">Add Friend</button>
+                                </h4>
+                            </form>
+
+                            <br/>
                         @endforeach
-                        @else
-                            <p>No users with that name!</p>
+                    @else
+                        <p>No users with that name!</p>
                     @endif
 
                     @if (session('status'))
@@ -75,6 +80,5 @@
             </div>
         </div>
     </div>
-
 </body>
 @endsection
