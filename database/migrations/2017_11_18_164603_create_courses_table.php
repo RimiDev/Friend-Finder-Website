@@ -22,52 +22,57 @@ class CreateCoursesTable extends Migration
 			$table->string('startTime');
 			$table->string('endTime');
         });
-        
-        $file = fopen('/database/migrations/FakeTeachersListW2017.csv', 'r');
+
+        $file = fopen(storage_path('../database/migrations/FakeTeachersListW2017.csv'), 'r');
         while(!feof($file)){
             $column = fgetcsv($file, ",");
 
             $class[] = $column[0];
-            $section[] = $column[1];
+            $section[] = (int)$column[1];
             $title[] = $column[2];
             $teacher[] = $column[3];
-            $day[] = $column[4];
+            $day[] = (int)$column[4];
             $start[] = $column[5];
             $end[] = $column[6];
-        } 
+        }
         fclose($file);
-        
-        for($i = 1; $i < count($class); $i++){
-            if($i == 1){
-                $temp = $class[$i];
+
+        $classID = 1;
+        $classNumTemp = "";
+        for($i = 0; $i < count($class) - 1; $i++){
+            if($i + 1 == 1){
+                $classNumTemp = $class[$i + 1];
                 $classIDs[] = $classID;
                 //$classNum[] = $class[$i];
             }
             else{
-                if($temp == $class[$i]){
+                if($classNumTemp == $class[$i + 1]){
                     $classIDs[] = $classID;
                     //$classNum[] = $class[$i];
                 }
                 else{
-                    $temp = $class[$i];
+                    $classNumTemp = $class[$i + 1];
                     $classIDs[] = $classID;
                     //$classNum[] = $class[$i];
                     $classID++;
                 }
             }
         }
-        
-        for($j = 1; $j < count($title); $j++){
-            if($j == 1){
-                $titleTemp = $title[$j];
+
+        $courseID = 1;
+        $titleTemp = "";
+        $teachTemp = "";
+        for($j = 0; $j < count($title) - 1; $j++){
+            if($j + 1 == 1){
+                $titleTemp = $title[$j + 1];
                 $courseIDs[] = $courseID;
                 //$titles[] = $title[$j];
-                $teachTemp = $teacher[$j];
+                $teachTemp = $teacher[$j + 1];
                 //$teachers[] = $teacher[$j];
             }
             else{
-                if($titleTemp == $title[$j]){
-                    if($teachTemp == $teacher[$j]){
+                if($titleTemp == $title[$j + 1]){
+                    if($teachTemp == $teacher[$j + 1]){
                         $courseIDs[] = $courseID;
                         //$titles[] = $title[$j];
                         //$teachers[] = $teacher[$j]; 
@@ -76,25 +81,25 @@ class CreateCoursesTable extends Migration
                         $courseID++;
                         $courseIDs[] = $courseID;
                         //$titles[] = $title[$j];
-                        $teachTemp = $teacher[$j];
+                        $teachTemp = $teacher[$j + 1];
                         //$teachers[] = $teacher[$j];
                     }
                 }
                 else{
                     $courseID++;
-                    $titleTemp = $title[$j];
+                    $titleTemp = $title[$j + 1];
                     $courseIDs[] = $courseID;
                     //$titles[] = $title[$j];
-                    $teachTemp = $teacher[$j];
+                    $teachTemp = $teacher[$j + 1];
                     //$teachers[] = $teacher[$j];
                 }
             }
         }
         
         
-        for($x = 0; $x < count($day); $x++){
-           DB::table('courses')->insert(array('classID'=>$classID, 'sectionID'=>$section[$x], 'courseID'=>$courseID[$x],
-            'day'=>$day[$x], 'startTime'=>$start[$x], 'endTime'=>$end[$x])); 
+        for($x = 1; $x < count($day) - 1; $x++){
+           DB::table('courses')->insert(array('classID'=>$classIDs[$x-1], 'sectionID'=>$section[$x], 'courseID'=>$courseIDs[$x-1],
+               'day'=>$day[$x], 'startTime'=>$start[$x], 'endTime'=>$end[$x]));
         }        
         
     }
