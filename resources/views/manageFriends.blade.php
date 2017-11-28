@@ -55,6 +55,7 @@
                         <input type="submit" name="submitFriendSearch" value="Search">
                     </form>
                 </div>
+
                 <div class="panel-body">
                     @if( isset($friends) && count($friends) > 0)
                         @foreach($friends as $friend)
@@ -64,10 +65,11 @@
                                     <button id="addButton" type="button">Add Friend</button>
                                 </h4>
                             </form>
-
                             <br/>
                         @endforeach
+                        {{ $friends->links() }}
                     @else
+                        {{count($friends)}}
                         <p>No users with that name!</p>
                     @endif
 

@@ -25,7 +25,7 @@ class FriendController extends Controller
      */
     public function search(Request $request)
     {
-        $dbNames = User::where(('name'), 'ilike', '%'.$request->get('name').'%')->get();
+        $dbNames = User::where(('name'), 'ilike', '%'.$request->get('name').'%')->paginate(10);
         return view('manageFriends', ['friends' => $dbNames, ]);
     }
 }

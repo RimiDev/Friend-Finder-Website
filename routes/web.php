@@ -30,3 +30,5 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::post('/manageFriends', 'FriendController@search');
+
+Route::get('/manageFriends', 'FriendController@search');
