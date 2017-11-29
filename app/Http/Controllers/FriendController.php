@@ -39,7 +39,7 @@ class FriendController extends Controller
             $friend->email = Auth::user()->email;
             $friend->status = 'pending';
             $friend->friendEmail = $request->get('addFriendBtn');
-            //$friend->save();
+            $friend->save();
 
             return view('manageFriends' , ['status' => 'pending',]);
         }

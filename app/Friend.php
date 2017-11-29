@@ -17,4 +17,6 @@ class Friend extends Authenticatable
     protected $fillable = [
         'email', 'status', 'friendEmail'
     ];
+
+    public $timestamps = false;
 }
