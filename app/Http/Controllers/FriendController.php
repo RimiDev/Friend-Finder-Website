@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Friend;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class FriendController extends Controller
@@ -23,9 +25,23 @@ class FriendController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function search(Request $request)
+    public function friends(Request $request)
     {
-        $dbNames = User::where(('name'), 'ilike', '%'.$request->get('name').'%')->paginate(10);
-        return view('manageFriends', ['friends' => $dbNames, ]);
+        if($request->get('submitFriendSearch'))
+        {
+            $dbNames = User::where(('name'), 'ilike', '%' . $request->get('name') . '%')->
+                where('name', '!=', Auth::user()->name)->paginate(10);
+            return view('manageFriends', ['friends' => $dbNames,]);
+        }
+        else if($request->get('addFriendBtn'))
+        {
+            $friend = new Friend();
+            $friend->email = Auth::user()->email;
+            $friend->status = 'pending';
+            $friend->friendEmail = $request->get('addFriendBtn');
+            //$friend->save();
+
+            return view('manageFriends' , ['status' => 'pending',]);
+        }
     }
 }

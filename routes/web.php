@@ -29,6 +29,5 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::post('/manageFriends', 'FriendController@search');
+Route::post('/manageFriends', 'FriendController@friends');
 
-Route::get('/manageFriends', 'FriendController@search');
