@@ -17,6 +17,6 @@ class CourseController extends Controller
 
         $couseArray = array();
 
-        
+
     }
 }

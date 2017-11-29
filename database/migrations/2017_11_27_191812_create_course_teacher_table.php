@@ -1,9 +1,7 @@
 <?php
-
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-
 class CreateCourseTeacherTable extends Migration
 {
     /**
@@ -18,11 +16,9 @@ class CreateCourseTeacherTable extends Migration
             $table->string('title');
             $table->string('teacher');
         });
-
         $file = fopen(storage_path('../database/migrations/FakeTeachersListW2017.csv'), 'r');
-        while(!feof($file)){
+        while (!feof($file)) {
             $column = fgetcsv($file, ",");
-
             $class[] = $column[0];
             $section[] = $column[1];
             $title[] = $column[2];
@@ -32,32 +28,28 @@ class CreateCourseTeacherTable extends Migration
             $end[] = $column[6];
         }
         fclose($file);
-
         $courseID = 1;
         $titleTemp = "";
         $teachTemp = "";
-        for($j = 0; $j < count($title) - 1; $j++){
-            if($j + 1 == 1){
+        for ($j = 0; $j < count($title) - 1; $j++) {
+            if ($j + 1 == 1) {
                 $courseIDs[] = $courseID;
                 $titleTemp = $title[$j + 1];
                 $titles[] = $title[$j + 1];
                 $teachTemp = $teacher[$j + 1];
                 $teachers[] = $teacher[$j + 1];
-            }
-            else{
-                if($titleTemp == $title[$j + 1]){
-                    if($teachTemp == $teacher[$j + 1]){
+            } else {
+                if ($titleTemp == $title[$j + 1]) {
+                    if ($teachTemp == $teacher[$j + 1]) {
                         //do nothing, this combination is already in the arrays
-                    }
-                    else{
+                    } else {
                         $courseID++;
                         $courseIDs[] = $courseID;
                         $titles[] = $title[$j + 1];
                         $teachTemp = $teacher[$j + 1];
                         $teachers[] = $teacher[$j + 1];
                     }
-                }
-                else{
+                } else {
                     $courseID++;
                     $courseIDs[] = $courseID;
                     $titleTemp = $title[$j + 1];
@@ -67,12 +59,10 @@ class CreateCourseTeacherTable extends Migration
                 }
             }
         }
-
-        for($x = 0; $x < count($courseIDs) - 1; $x++){
-            DB::table('course_teacher')->insert(array('courseID'=>$courseIDs[$x], 'title'=>$titles[$x], 'teacher'=>$teachers[$x]));
+        for ($x = 0; $x < count($courseIDs) - 1; $x++) {
+            DB::table('course_teacher')->insert(array('courseID' => $courseIDs[$x], 'title' => $titles[$x], 'teacher' => $teachers[$x]));
         }
     }
-
     /**
      * Reverse the migrations.
      *
