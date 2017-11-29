@@ -19,7 +19,7 @@ class CreateClassesTable extends Migration
         });
 
         $file = fopen(storage_path('../database/migrations/FakeTeachersListW2017.csv'), 'r');
-        while (!feof($file)) {
+        while(!feof($file)){
             $column = fgetcsv($file, ",");
 
             $class[] = $column[0];
@@ -34,14 +34,15 @@ class CreateClassesTable extends Migration
 
         $classID = 1;
         $classNumTemp = 0;
-        for ($i = 0; $i < count($class) - 1; $i++) {
-            if ($i + 1 == 1) {
+        for($i = 0; $i < count($class) - 1; $i++){
+            if($i + 1 == 1){
                 $classNumTemp = $class[$i + 1];
                 $classIDs[] = $classID;
                 $classNums[] = $class[$i + 1];
                 $classID++;
-            } else {
-                if ($classNumTemp != $class[$i + 1]) {
+            }
+            else{
+                if($classNumTemp != $class[$i + 1]){
                     $classNumTemp = $class[$i + 1];
                     $classIDs[] = $classID;
                     $classNums[] = $class[$i + 1];
@@ -50,8 +51,8 @@ class CreateClassesTable extends Migration
             }
         }
 
-        for ($x = 0; $x < count($classIDs) - 1; $x++) {
-            DB::table('classes')->insert(array('classID' => $classIDs[$x], 'classNumber' => $classNums[$x]));
+        for($x = 0; $x < count($classIDs) - 1; $x++){
+            DB::table('classes')->insert(array('classID'=>$classIDs[$x], 'classNumber'=>$classNums[$x]));
         }
     }
 

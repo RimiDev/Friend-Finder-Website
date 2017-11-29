@@ -19,7 +19,7 @@ class CreateCourseTeacherTable extends Migration
             $table->string('teacher');
         });
 
-        $file = fopen(storage_path('../database/migrations/FakeTeachersListW2017.csv'), 'r');
+        $file = fopen('/database/migrations/FakeTeachersListW2017.csv', 'r');
         while(!feof($file)){
             $column = fgetcsv($file, ",");
 
@@ -30,46 +30,43 @@ class CreateCourseTeacherTable extends Migration
             $day[] = $column[4];
             $start[] = $column[5];
             $end[] = $column[6];
-        }
+        } 
         fclose($file);
 
-        $courseID = 1;
-        $titleTemp = "";
-        $teachTemp = "";
-        for($j = 0; $j < count($title) - 1; $j++){
-            if($j + 1 == 1){
+        for($j = 1; $j < count($title); $j++){
+            if($j == 1){
                 $courseIDs[] = $courseID;
-                $titleTemp = $title[$j + 1];
-                $titles[] = $title[$j + 1];
-                $teachTemp = $teacher[$j + 1];
-                $teachers[] = $teacher[$j + 1];
+                $titleTemp = $title[$j];
+                $titles[] = $title[$j];
+                $teachTemp = $teacher[$j];
+                $teachers[] = $teacher[$j];
             }
             else{
-                if($titleTemp == $title[$j + 1]){
-                    if($teachTemp == $teacher[$j + 1]){
+                if($titleTemp == $title[$j]){
+                    if($teachTemp == $teacher[$j]){
                         //do nothing, this combination is already in the arrays
                     }
                     else{
                         $courseID++;
                         $courseIDs[] = $courseID;
-                        $titles[] = $title[$j + 1];
-                        $teachTemp = $teacher[$j + 1];
-                        $teachers[] = $teacher[$j + 1];
+                        $titles[] = $title[$j];
+                        $teachTemp = $teacher[$j];
+                        $teachers[] = $teacher[$j];
                     }
                 }
                 else{
                     $courseID++;
                     $courseIDs[] = $courseID;
-                    $titleTemp = $title[$j + 1];
-                    $titles[] = $title[$j + 1];
-                    $teachTemp = $teacher[$j + 1];
-                    $teachers[] = $teacher[$j + 1];
+                    $titleTemp = $title[$j];
+                    $titles[] = $title[$j];
+                    $teachTemp = $teacher[$j];
+                    $teachers[] = $teacher[$j];
                 }
             }
         }
 
-        for($x = 0; $x < count($courseIDs) - 1; $x++){
-            DB::table('course_teacher')->insert(array('courseID'=>$courseIDs[$x], 'title'=>$titles[$x], 'teacher'=>$teachers[$x]));
+        for($x = 0; $x < count($courseIDs); $x++){
+            DB::table('course_teacher')->insert(array('courseID'=>$courseIDs[$x], 'title'=>$titles[$x], 'teacher'=>$teachers[$x]))
         }
     }
 
