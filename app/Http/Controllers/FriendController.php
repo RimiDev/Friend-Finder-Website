@@ -20,6 +20,12 @@ class FriendController extends Controller
         $this->middleware('auth');
     }
 
+    public function index()
+    {
+        $allFriends = User::where('name', '!=', Auth::user()->name);
+        return view('manageFriends', ['completeFriends' => $allFriends]);
+    }
+
     /**
      * Show the application dashboard.
      *
@@ -32,8 +38,9 @@ class FriendController extends Controller
             $dbNames = User::where(('name'), 'ilike', '%' . $request->get('name') . '%')->
                 where('name', '!=', Auth::user()->name)->paginate(10);
             $friends = $request->user()->friends()->get();
+            $allFriends = User::where('name', '!=', Auth::user()->name)->paginate(10);
 
-            return view('manageFriends', ['friends' => $dbNames, 'status' => $friends]);
+            return view('manageFriends', ['friends' => $dbNames, 'status' => $friends, 'completeFriends' => $allFriends]);
         }
         else if($request->get('addFriendBtn'))
         {

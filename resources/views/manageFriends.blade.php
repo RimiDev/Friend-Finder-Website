@@ -32,9 +32,14 @@
                     <h3 id="boldText"> Friends </h3>
                 </div>
                 <div class="panel-body">
-                    <p>Friend1</p>
-                    <p>Friend2</p>
-                    <p>Friend3</p>
+
+                    @if(isset($completeFriends) && count($completeFriends) > 0)
+                        @foreach($completeFriends as $friend)
+                            @if(isset($status) && count($status) > 0)
+                                    <h4 id="boldText">{{ $friend->name.' '.$friend->program. ' '. $status[0]->status}}</h4>
+                            @endif
+                        @endforeach
+                    @endif
 
                     @if (session('status'))
                         <div class="alert alert-success">
@@ -62,13 +67,12 @@
                             <form action="" method="post">
                                 {{ csrf_field() }}
 
-                                <?php if(isset($status) && count($status) > 0)
-                                     foreach($status as $value)
-                                         $allFriends[] = $value->friendEmail;
+                                <?php if (isset($status) && count($status) > 0)
+                                    foreach ($status as $value)
+                                        $allFriends[] = $value->friendEmail;
                                 ?>
 
                                 @if(isset($allFriends))
-
                                     @if(in_array($friend->email, $allFriends))
                                         <h4 id="boldText">{{ $friend->name.' '.$friend->program. ' '. $value->status}}</h4>
                                     @else
@@ -79,7 +83,7 @@
                                             </button>
                                         </h4>
                                     @endif
-                                    @else
+                                @else
                                     <h4 id="boldText">{{ $friend->name.' '.$friend->program}}
                                         <button id="addButton" type="submit" value="{{$friend->email}}"
                                                 name="addFriendBtn">
