@@ -17,9 +17,7 @@ Route::get('/manageCourses', function () {
 	return view('manageCourses');
 });
 
-Route::get('/manageFriends', function () {
-	return view('manageFriends');
-});
+Route::get('/manageFriends', 'FriendController@index');
 
 Route::get('/findFriendBreaks', function () {
     return view('findFriendBreaks');
@@ -28,3 +26,6 @@ Route::get('/findFriendBreaks', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::post('/manageFriends', 'FriendController@friends');
+

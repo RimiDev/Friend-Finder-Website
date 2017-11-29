@@ -1,13 +1,12 @@
 @extends('layouts.app')
 
-        <!doctype html>
-<html lang="{{ app()->getLocale() }}">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Laravel</title>
+    <title>Manage Friends</title>
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
@@ -25,25 +24,92 @@
                 <li><a href="/findFriendBreaks">Find Friend Breaks</a></li>
             </ul>
         </div>
-        <div class="row">
-            <div class="col-md-8 col-md-offset-2">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                    </div>
+        <br/><br/><br/>
 
-                    <div class="panel-body">
-                        @if (session('status'))
-                            <div class="alert alert-success">
-                                {{ session('status') }}
-                            </div>
-                        @endif
+        <div id="block">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 id="boldText"> Friends </h3>
+                </div>
+                <div class="panel-body">
+
+                    @if(isset($completeFriends) && count($completeFriends) > 0)
+                        @foreach($completeFriends as $friend)
+                            @if(isset($status) && count($status) > 0)
+                                    <h4 id="boldText">{{ $friend->name.' '.$friend->program. ' '. $status[0]->status}}</h4>
+                            @endif
+                        @endforeach
+                    @endif
+
+                    @if (session('status'))
+                        <div class="alert alert-success">
+                            {{ session('status') }}
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <div id="block">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <form action="" method="post">
+                        {{ csrf_field() }}
+                        <h3 id="boldText">Search for friends:</h3>
+                        <input id="textSearch" type="text" name="name">
+                        <input type="submit" name="submitFriendSearch" value="Search">
+                    </form>
+                </div>
+
+                <div class="panel-body">
+                    @if( isset($friends) && count($friends) > 0)
+                        @foreach($friends as $friend)
+                            <form action="" method="post">
+                                {{ csrf_field() }}
+
+                                <?php if (isset($status) && count($status) > 0)
+                                    foreach ($status as $value)
+                                        $allFriends[] = $value->friendEmail;
+                                ?>
+
+                                @if(isset($allFriends))
+                                    @if(in_array($friend->email, $allFriends))
+                                        <h4 id="boldText">{{ $friend->name.' '.$friend->program. ' '. $value->status}}</h4>
+                                    @else
+                                        <h4 id="boldText">{{ $friend->name.' '.$friend->program}}
+                                            <button id="addButton" type="submit" value="{{$friend->email}}"
+                                                    name="addFriendBtn">
+                                                Add Friend
+                                            </button>
+                                        </h4>
+                                    @endif
+                                @else
+                                    <h4 id="boldText">{{ $friend->name.' '.$friend->program}}
+                                        <button id="addButton" type="submit" value="{{$friend->email}}"
+                                                name="addFriendBtn">
+                                            Add Friend
+                                        </button>
+                                    </h4>
+                                @endif
+
+                            </form>
+
+                        @endforeach
+                        <br/>
+                        {{ $friends->links() }}
+                    @else
+                        <p>No users with that name!</p>
+                    @endif
 
 
-                    </div>
+                    @if (session('status'))
+                        <div class="alert alert-success">
+                            {{ session('status') }}
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
     </div>
 </body>
-</html>>
 @endsection
