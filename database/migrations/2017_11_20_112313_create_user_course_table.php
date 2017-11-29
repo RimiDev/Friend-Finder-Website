@@ -13,7 +13,7 @@ class CreateUserCourseTable extends Migration
     {
         Schema::create('user_course', function (Blueprint $table) {
             $table->string('email')->unique();
-            $table->string('courseNumber');
+            $table->string('course_id');
         });
     }
     /**

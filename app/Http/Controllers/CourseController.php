@@ -16,7 +16,24 @@ class CourseController extends Controller
         $session = $request->session();
 
         $couseArray = array();
+    }
+
+    public function index(){
 
 
     }
+
+    public function courses(Request $request){
+
+      if ($request->get('submitCourseSearch')){
+
+
+
+
+      }
+
+
+
+    }
+
 }

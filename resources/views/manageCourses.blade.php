@@ -8,7 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Laravel</title>
+    <title>Manage Courses</title>
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
@@ -18,7 +18,6 @@
 @section('content')
 <div class="container">
   <h1> Manage courses </h1>
-
     <div class="navbar-header">
         <!--Side bar nav-->
         <ul class="nav navbar-nav">
@@ -27,11 +26,13 @@
             <li><a href="/findFriendBreaks">Find Friend Breaks</a></li>
         </ul>
     </div>
+    <br/><br/><br/>
 
-    <div class="row">
+    <div id="block">
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
                 <div class="panel-heading">
+                  <h3 id="boldText"> Courses </h3>
                 </div>
 
                 <div class="panel-body">
@@ -46,6 +47,23 @@
             </div>
         </div>
     </div>
+
+    <div id="block">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <form action="" method="post">
+                    {{ csrf_field() }}
+                    <h3 id="boldText">Search for courses:</h3>
+                    <input id="textSearch" type="text" name="name">
+                    <input type="submit" name="submitCourseSearch" value="Search">
+                </form>
+            </div>
+
+            <div class="panel-body">
+
+
+
+
 </div>
 </body>
 </html>
