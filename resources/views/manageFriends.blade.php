@@ -61,22 +61,42 @@
                         @foreach($friends as $friend)
                             <form action="" method="post">
                                 {{ csrf_field() }}
-                                <h4 id="boldText">{{ $friend->name.' '.$friend->program}}
-                                    <button id="addButton" type="submit" value="{{$friend->email}}" name="addFriendBtn">
-                                        Add Friend
-                                    </button>
-                                </h4>
+
+                                <?php if(isset($status) && count($status) > 0)
+                                     foreach($status as $value)
+                                         $allFriends[] = $value->friendEmail;
+                                ?>
+
+                                @if(isset($allFriends))
+
+                                    @if(in_array($friend->email, $allFriends))
+                                        <h4 id="boldText">{{ $friend->name.' '.$friend->program. ' '. $value->status}}</h4>
+                                    @else
+                                        <h4 id="boldText">{{ $friend->name.' '.$friend->program}}
+                                            <button id="addButton" type="submit" value="{{$friend->email}}"
+                                                    name="addFriendBtn">
+                                                Add Friend
+                                            </button>
+                                        </h4>
+                                    @endif
+                                    @else
+                                    <h4 id="boldText">{{ $friend->name.' '.$friend->program}}
+                                        <button id="addButton" type="submit" value="{{$friend->email}}"
+                                                name="addFriendBtn">
+                                            Add Friend
+                                        </button>
+                                    </h4>
+                                @endif
+
                             </form>
-                            <br/>
+
                         @endforeach
+                        <br/>
                         {{ $friends->links() }}
                     @else
                         <p>No users with that name!</p>
                     @endif
 
-                    @if( isset($status))
-                        {{ $status }}
-                    @endif
 
                     @if (session('status'))
                         <div class="alert alert-success">

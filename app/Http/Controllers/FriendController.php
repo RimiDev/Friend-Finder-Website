@@ -31,19 +31,22 @@ class FriendController extends Controller
         {
             $dbNames = User::where(('name'), 'ilike', '%' . $request->get('name') . '%')->
                 where('name', '!=', Auth::user()->name)->paginate(10);
-            return view('manageFriends', ['friends' => $dbNames,]);
+            $friends = $request->user()->friends()->get();
+
+            return view('manageFriends', ['friends' => $dbNames, 'status' => $friends]);
         }
         else if($request->get('addFriendBtn'))
         {
             $friend = new Friend();
             $friend->email = Auth::user()->email;
+            $friend->user_id = Auth::user()->id;
             $friend->status = 'pending';
             $friend->friendEmail = $request->get('addFriendBtn');
             $friend->save();
 
-            $dbNames = User::where('name', '!=', Auth::user()->name)->
-                where()->paginate(10);
-            return view('manageFriends' , ['friends' => $dbNames,]);
+            $dbNames = User::where('name', '!=', Auth::user()->name)->paginate(10);
+            $friends = $request->user()->friends()->get();
+            return view('manageFriends' , ['friends' => $dbNames, 'status' => $friends]);
         }
     }
 }
