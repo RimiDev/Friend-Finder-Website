@@ -41,7 +41,9 @@ class FriendController extends Controller
             $friend->friendEmail = $request->get('addFriendBtn');
             $friend->save();
 
-            return view('manageFriends' , ['status' => 'pending',]);
+            $dbNames = User::where('name', '!=', Auth::user()->name)->
+                where()->paginate(10);
+            return view('manageFriends' , ['friends' => $dbNames,]);
         }
     }
 }
