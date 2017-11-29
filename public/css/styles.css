@@ -1,7 +1,20 @@
-#block
-{
-    width: 50%;
-    height: 75%;
-    font-size: 25px;
+#block{
     float: left;
+    width: 50%;
+}
+
+#textSearch{
+    width: 50%;
+}
+
+#boldText{
+    font-weight: bold;
+}
+
+#addButton{
+    float: right;
+}
+
+#programText{
+    float: right;
 }
