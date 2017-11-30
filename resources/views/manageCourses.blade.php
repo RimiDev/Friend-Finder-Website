@@ -59,6 +59,11 @@
                 <form action="" method="post">
                     {{ csrf_field() }}
                     <h3 id="boldText">Search for courses:</h3>
+                    <input type="radio" name="searchOption" value="teacher" checked> Teacher name</input>
+                    <input type="radio" name="searchOption" value="courseNumber"> Course number</input>
+                    <input type="radio" name="searchOption" value="courseTitle"> Course title</input>
+                  </br>
+                  </br>
                     <input id="textSearch" type="text" name="courseName">
                     <input type="submit" name="submitCourseSearch" value="Search">
                 </form>
@@ -67,10 +72,10 @@
             <div class="panel-body">
             @if(isset($courseSearches[0]) && get_class($courseSearches[0]) ==  'App\Course_teacher')
               @foreach($courseSearches as $course)
-              <h4>{{ $course->title . ' ' . $course->teacher }}</h4>
+                <h4>{{ $course->title . ' ' . $course->teacher }}</h4>
               @endforeach
             @else
-              <h4> No data found </h4>
+              <h4> No teachers found </h4>
             @endif
 
         </div>

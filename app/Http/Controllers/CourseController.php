@@ -50,18 +50,28 @@ class CourseController extends Controller
         }
       }
 
-
       if ($request->get('submitCourseSearch')){
 
-        //This will grab the courseName that the user has searched for.
-        $searchedCourses[] = Course_teacher::where('teacher', 'ilike', '%' .
-        $request->get('courseName') . '%')->first();
-
-        if (count($searchedCourses) > 0){
-          return view('manageCourses', ['courseSearches' => $searchedCourses,  'completeCourses' => $coursesUserHas]);
-        } else {
-          return view('manageCourses', ['completeCourses' => $coursesUserHas]);
+        //Check if the user wants to search for a course by teacher.
+        if ($_POST['searchOption'] == 'teacher'){
+          //This will grab the courseName that the user has searched for.
+          $searchedCourses = Course_teacher::where('teacher', 'ilike', '%' .
+          $request->get('courseName') . '%')->get();
+          if (count($searchedCourses) > 0){
+            return view('manageCourses', ['courseSearches' => $searchedCourses,  'completeCourses' => $coursesUserHas]);
+          } else {
+            return view('manageCourses', ['completeCourses' => $coursesUserHas]);
+          }
         }
+
+        if ($_POST['searchOption'] == 'courseNumber'){
+          echo 'Hello';
+        }
+
+        if ($_POST['searchOption'] == 'courseTitle'){
+          echo 'Hello';
+        }
+
 
 
 
