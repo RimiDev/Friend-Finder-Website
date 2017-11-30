@@ -64,18 +64,29 @@
                     <input type="radio" name="searchOption" value="courseTitle"> Course title</input>
                   </br>
                   </br>
-                    <input id="textSearch" type="text" name="courseName">
+                    <input id="textSearch" type="text" name="searchedContent">
                     <input type="submit" name="submitCourseSearch" value="Search">
                 </form>
             </div>
 
             <div class="panel-body">
-            @if(isset($courseSearches[0]) && get_class($courseSearches[0]) ==  'App\Course_teacher')
-              @foreach($courseSearches as $course)
+              <!--big if statement that if nothing is set, that means there's no courses found-->
+
+              <!--Teacher search-->
+            @if(isset($teacherSearch[0]) && get_class($teacherSearch[0]) ==  'App\Course_teacher')
+              @foreach($teacherSearch as $course)
+                <h4>{{ $course->title . ' ' . $course->teacher }}</h4>
+                @foreach($completeCourses as $course)
+                {{ $course->title . ' ' . $course->teacher }}
+                @endforeach
+              @endforeach
+            @endif
+
+            <!--Course number search-->
+            @if(isset($courseNumberSearch))
+              @foreach($courseNumberSearch as $course)
                 <h4>{{ $course->title . ' ' . $course->teacher }}</h4>
               @endforeach
-            @else
-              <h4> No teachers found </h4>
             @endif
 
         </div>
