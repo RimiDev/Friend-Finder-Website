@@ -20,10 +20,17 @@ class FriendController extends Controller
         $this->middleware('auth');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $allFriends = User::where('name', '!=', Auth::user()->name);
-        return view('manageFriends', ['completeFriends' => $allFriends]);
+        $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->get();
+        foreach ($friendStatus as $friend)
+            $friendNames[] = User::where('email', '=', $friend->friendEmail)->first();
+
+        $searchNames = $this->searchFriends($request);
+
+        if(isset($friendNames) && count($friendNames) > 0 && isset($friendStatus) && count($friendStatus) > 0)
+            return view('manageFriends', ['friendNames' => $friendNames, 'friendStatus' => $friendStatus, 'searchNames' => $searchNames]);
+        return view('manageFriends',['searchNames' => $searchNames]);
     }
 
     /**
@@ -31,29 +38,107 @@ class FriendController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function friends(Request $request)
+    public function searchSaveUpdateFriends(Request $request)
     {
-        if($request->get('submitFriendSearch'))
+        if ($request->get('submitFriendSearch'))
         {
-            $dbNames = User::where(('name'), 'ilike', '%' . $request->get('name') . '%')->
-                where('name', '!=', Auth::user()->name)->paginate(10);
-            $friends = $request->user()->friends()->get();
-            $allFriends = User::where('name', '!=', Auth::user()->name)->paginate(10);
+            $searchNames = $this->searchFriends($request);
 
-            return view('manageFriends', ['friends' => $dbNames, 'status' => $friends, 'completeFriends' => $allFriends]);
+            $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->get();
+            foreach ($friendStatus as $friend)
+                $friendNames[] = User::where('email', '=', $friend->friendEmail)->first();
+
+            if(isset($friendNames) && count($friendNames) > 0 && isset($friendStatus) && count($friendStatus) > 0)
+                return view('manageFriends', ['searchNames' => $searchNames, 'friendNames' => $friendNames,
+                    'friendStatus' => $friendStatus]);
+            return view('manageFriends', ['searchNames' => $searchNames]);
         }
-        else if($request->get('addFriendBtn'))
+
+        else if ($request->get('addFriendBtn'))
+        {
+            $this->saveFriend($request);
+
+            $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->get();
+            foreach ($friendStatus as $friend)
+                $friendNames[] = User::where('email', '=', $friend->friendEmail)->first();
+
+            return view('manageFriends', ['friendNames' => $friendNames, 'friendStatus' => $friendStatus]);
+        }
+
+        else if ($request->get('acceptRequest'))
+        {
+            $this->acceptFriendRequest($request);
+
+            $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->get();
+            foreach ($friendStatus as $friend)
+                $friendNames[] = User::where('email', '=', $friend->friendEmail)->first();
+
+            if(isset($friendNames) && count($friendNames) > 0 && isset($friendStatus) && count($friendStatus) > 0)
+                return view('manageFriends', ['friendNames' => $friendNames, 'friendStatus' => $friendStatus]);
+            return view('manageFriends');
+        }
+        else if ($request->get('declineRequest'))
+        {
+            $this->declineFriendRequest($request);
+
+            $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->get();
+            foreach ($friendStatus as $friend)
+                $friendNames[] = User::where('email', '=', $friend->friendEmail)->first();
+
+            if(isset($friendNames) && count($friendNames) > 0 && isset($friendStatus) && count($friendStatus) > 0)
+                return view('manageFriends', ['friendNames' => $friendNames, 'friendStatus' => $friendStatus]);
+            return view('manageFriends');
+        }
+    }
+
+    private function searchFriends(Request $request)
+    {
+        $searchNames = User::where(('name'), 'ilike', '%' . $request->get('name') . '%')->
+            where('name', '!=', Auth::user()->name)->
+            whereNotIn('email', function($q){ $q->select('friendEmail')->from('friends')->
+            where('email', '=', Auth::user()->email); })->paginate(10);
+
+        return $searchNames;
+    }
+
+    private function saveFriend(Request $request)
+    {
+        $checkExists = Friend::where('email', '=', Auth::user()->email)->
+            where('friendEmail', '=', $request->get('addFriendBtn'))->get();
+
+        if (count($checkExists) <= 0)
         {
             $friend = new Friend();
             $friend->email = Auth::user()->email;
             $friend->user_id = Auth::user()->id;
-            $friend->status = 'pending';
+            $friend->status = 'Request Sent';
             $friend->friendEmail = $request->get('addFriendBtn');
             $friend->save();
 
-            $dbNames = User::where('name', '!=', Auth::user()->name)->paginate(10);
-            $friends = $request->user()->friends()->get();
-            return view('manageFriends' , ['friends' => $dbNames, 'status' => $friends]);
+            $friend = new Friend();
+            $friend->email = $request->get('addFriendBtn');
+            $friend->user_id = Auth::user()->id;
+            $friend->status = 'Request Received';
+            $friend->friendEmail = Auth::user()->email;
+            $friend->save();
         }
+    }
+
+    private function acceptFriendRequest(Request $request)
+    {
+        Friend::where('email', '=', Auth::user()->email)->
+        where('friendEmail', '=', $request->get('acceptRequest'))->update(['status' => 'Confirmed']);
+
+        Friend::where('email', '=', $request->get('acceptRequest'))->
+        where('friendEmail', '=', Auth::user()->email)->update(['status' => 'Confirmed']);
+    }
+
+    private function declineFriendRequest(Request $request)
+    {
+        Friend::where('email', '=', Auth::user()->email)->
+            where('friendEmail', '=', $request->get('declineRequest'))->delete();
+
+        Friend::where('email', '=', $request->get('declineRequest'))->
+            where('friendEmail', '=', Auth::user()->email)->delete();
     }
 }
