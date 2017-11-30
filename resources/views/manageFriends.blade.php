@@ -33,12 +33,25 @@
                 </div>
                 <div class="panel-body">
 
-                    @if(isset($completeFriends) && count($completeFriends) > 0)
-                        @foreach($completeFriends as $friend)
-                            @if(isset($status) && count($status) > 0)
-                                    <h4 id="boldText">{{ $friend->name.' '.$friend->program. ' '. $status[0]->status}}</h4>
-                            @endif
-                        @endforeach
+                    @if(isset($friendNames) && count($friendNames) > 0 && isset($friendStatus) && count($friendStatus) > 0)
+                    @for($i = 0; $i < count($friendStatus); $i++)
+                        <h4 id="boldText">{{ $friendNames[$i]->name.' '.$friendNames[$i]->program.' '.$friendStatus[$i]->status }}
+
+                        @if($friendStatus[$i]->status === 'Request Received')
+                            <form method="post" action="">
+                                {{ csrf_field() }}
+                                    <button id="addButton" type="submit" name="acceptRequest"
+                                            value="{{$friendNames[$i]->email}}">
+                                        Accept
+                                    </button>
+                                    <button id="addButton" type="submit" name="declineRequest"
+                                            value="{{$friendNames[$i]->email}}">
+                                        Decline
+                                    </button>
+                            </form>
+                        </h4>
+                        @endif
+                    @endfor
                     @endif
 
                     @if (session('status'))
@@ -62,45 +75,20 @@
                 </div>
 
                 <div class="panel-body">
-                    @if( isset($friends) && count($friends) > 0)
-                        @foreach($friends as $friend)
-                            <form action="" method="post">
+
+                    @if(isset($searchNames) && count($searchNames) > 0)
+                        @foreach($searchNames as $name)
+                            <form method="post" action="">
                                 {{ csrf_field() }}
-
-                                <?php if (isset($status) && count($status) > 0)
-                                    foreach ($status as $value)
-                                        $allFriends[] = $value->friendEmail;
-                                ?>
-
-                                @if(isset($allFriends))
-                                    @if(in_array($friend->email, $allFriends))
-                                        <h4 id="boldText">{{ $friend->name.' '.$friend->program. ' '. $value->status}}</h4>
-                                    @else
-                                        <h4 id="boldText">{{ $friend->name.' '.$friend->program}}
-                                            <button id="addButton" type="submit" value="{{$friend->email}}"
-                                                    name="addFriendBtn">
-                                                Add Friend
-                                            </button>
-                                        </h4>
-                                    @endif
-                                @else
-                                    <h4 id="boldText">{{ $friend->name.' '.$friend->program}}
-                                        <button id="addButton" type="submit" value="{{$friend->email}}"
-                                                name="addFriendBtn">
-                                            Add Friend
-                                        </button>
-                                    </h4>
-                                @endif
-
+                                <h4 id="boldText">
+                                    {{ $name->name. ' ' .$name->program }}
+                                    <button id="addButton" type="submit" name="addFriendBtn" value="{{$name->email}}">
+                                        Add Friend
+                                    </button>
+                                </h4>
                             </form>
-
                         @endforeach
-                        <br/>
-                        {{ $friends->links() }}
-                    @else
-                        <p>No users with that name!</p>
                     @endif
-
 
                     @if (session('status'))
                         <div class="alert alert-success">
