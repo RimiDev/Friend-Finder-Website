@@ -26,9 +26,11 @@ class FriendController extends Controller
         foreach ($friendStatus as $friend)
             $friendNames[] = User::where('email', '=', $friend->friendEmail)->first();
 
+        $searchNames = $this->searchFriends($request);
+
         if(isset($friendNames) && count($friendNames) > 0 && isset($friendStatus) && count($friendStatus) > 0)
-            return view('manageFriends', ['friendNames' => $friendNames, 'friendStatus' => $friendStatus]);
-        return view('manageFriends');
+            return view('manageFriends', ['friendNames' => $friendNames, 'friendStatus' => $friendStatus, 'searchNames' => $searchNames]);
+        return view('manageFriends',['searchNames' => $searchNames]);
     }
 
     /**

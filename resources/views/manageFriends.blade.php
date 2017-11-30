@@ -83,7 +83,7 @@
                                 </h4>
                             </form>
                         @endforeach
-                        {{ $searchNames->links() }}
+                        {{ $searchNames->appends(request()->input())->links() }}
                     @else
                         <p>No users with that name!</p>
                     @endif
