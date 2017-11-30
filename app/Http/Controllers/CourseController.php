@@ -91,6 +91,8 @@ class CourseController extends Controller
 
         }
 
+      } // End of teacher search
+
 
         //COURSE NUMBER SEARCH------------------------
         if ($_POST['searchOption'] == 'courseNumber'){
@@ -118,12 +120,20 @@ class CourseController extends Controller
           echo 'Hello';
         }
 
-      }//end of submitCourseSearch POST REQUEST------
-
-    }// end of class
+      } //end of submitCourseSearch POST REQUEST------
 
 
+      //REMOVE && ADD BUTTONS
+
+      //Remove button clicked on a specific course.
+      if($request->get('removeCourseBtn')){
+
+
+      }
 
 
 
-  } // end of courses
+
+
+
+    }// end of CourseController

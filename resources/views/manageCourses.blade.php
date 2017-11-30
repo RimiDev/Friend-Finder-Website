@@ -38,11 +38,34 @@
 
                 @if(isset($courseTitleTeacher))
                 @for ($i = 0; $i < count($courseTitleTeacher); $i++)
-                  <h4>{{ $courseTitleTeacher[$i]->title . ' '
+                  <h4 id="boldText">{{ $courseTitleTeacher[$i]->title . ' '
                        . $courseTitleTeacher[$i]->teacher }}</h4>
+                       <?php
+                       switch($courseTimeDaySection[$i]->day){
+                                case 1: echo 'Monday';
+                                        break;
+                                case 2: echo 'Tuesday';
+                                        break;
+                                case 3: echo 'Wednesday';
+                                        break;
+                                case 4: echo 'Thursday';
+                                        break;
+                                case 5: echo 'Friday';
+                                        break;
+                       }
+                       ?>
                       {{ $courseTimeDaySection[$i]->startTime . '-'
-                       . $courseTimeDaySection[$i]->endTime  }}
+                       . $courseTimeDaySection[$i]->endTime . ' | Section: '
+                       . $courseTimeDaySection[$i]->sectionID }}
+
+                       <button id="removeButton" type="submit" value="{{$courseTimeDaySection[$i]->id}}"
+                               name="removeCourseBtn">
+                           Remove course
+                       </button>
+
                   @endfor
+                @else
+                  <h4 id="boldText"> No courses registered </h4>
                 @endif
                     @if (session('status'))
                         <div class="alert alert-success">
