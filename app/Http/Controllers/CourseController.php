@@ -28,10 +28,15 @@ class CourseController extends Controller
       $courseIdsThatUserHas = User_course::where('email','=', Auth::user()->email)->get();
 
       //This will grab the courseTitles from the course ids that the user has.
-      foreach ($courseIdsThatUserHas as $value) {
-      $coursesUserHas[] = Course_teacher::where('courseID','=',$value->course_id)->first();
+      if (count($courseIdsThatUserHas)){
+        foreach ($courseIdsThatUserHas as $value) {
+          $coursesUserHas[] = Course_teacher::where('courseID','=',$value->course_id)->first();
+        }
+        return view('manageCourses', ['completeCourses' => $coursesUserHas]);
+      } else {
+        $coursesUserHas = 'No course to display';
+        return view('manageCourses', ['completeCourses' => 'No courses to display']);
       }
-      return view('manageCourses', ['completeCourses' => $coursesUserHas]);
     //return view('manageCourses', array('completeCourses' => $coursesUserHas));
 
 

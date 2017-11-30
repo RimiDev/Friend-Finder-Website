@@ -35,9 +35,13 @@
                   <h3 id="boldText"> Courses </h3>
                 </div>
                 <div class="panel-body">
+                @if($completeCourses != 'No courses to display')
                   @foreach($completeCourses as $course)
-                  <h4 id="boldText">{{ $course->title . ' ' . $course->teacher }}</h4>
+                  <h4>{{ $course->title . ' ' . $course->teacher }}</h4>
                   @endforeach
+                @else
+                  <h4> No courses to display </h4>
+                @endif
                     @if (session('status'))
                         <div class="alert alert-success">
                             {{ session('status') }}
