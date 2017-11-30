@@ -36,12 +36,13 @@
                 </div>
                 <div class="panel-body">
 
-                @if(isset($completeCourses))
-                  @foreach($completeCourses as $course)
-                  <h4>{{ $course->title . ' ' . $course->teacher }}</h4>
-                  @endforeach
-                @else
-                  <h4> No courses to display </h4>
+                @if(isset($courseTitleTeacher))
+                @for ($i = 0; $i < count($courseTitleTeacher); $i++)
+                  <h4>{{ $courseTitleTeacher[$i]->title . ' '
+                       . $courseTitleTeacher[$i]->teacher }}</h4>
+                      {{ $courseTimeDaySection[$i]->startTime . '-'
+                       . $courseTimeDaySection[$i]->endTime  }}
+                  @endfor
                 @endif
                     @if (session('status'))
                         <div class="alert alert-success">
@@ -70,15 +71,11 @@
             </div>
 
             <div class="panel-body">
-              <!--big if statement that if nothing is set, that means there's no courses found-->
-
+              <!--IF STATE
               <!--Teacher search-->
             @if(isset($teacherSearch[0]) && get_class($teacherSearch[0]) ==  'App\Course_teacher')
               @foreach($teacherSearch as $course)
                 <h4>{{ $course->title . ' ' . $course->teacher }}</h4>
-                @foreach($completeCourses as $course)
-                {{ $course->title . ' ' . $course->teacher }}
-                @endforeach
               @endforeach
             @endif
 

@@ -25,18 +25,30 @@ class CourseController extends Controller
 
     public function index(){
 
-      //Select all Course ids that the user has.
+      //Select all ids that the user has.
       $courseIdsThatUserHas = User_course::where('email','=', Auth::user()->email)->get();
 
-      //This will grab the courseTitles from the course ids that the user has.
-      if (count($courseIdsThatUserHas)){
+      //This will grab the row of the table that has the
+      //startTime,endTime,Section,Day.
+      if (count($courseIdsThatUserHas) > 0){
         foreach ($courseIdsThatUserHas as $value) {
-          $coursesUserHas[] = Course_teacher::where('courseID','=',$value->course_id)->first();
+          $courseTimeDaySection[] = Course::where('id','=',$value->course_id)->first();
         }
-        return view('manageCourses', ['completeCourses' => $coursesUserHas]);
+
+        //This will grab the the row of the table that has the
+        //Title of the course and teacher.
+        foreach($courseTimeDaySection as $value) {
+          $courseTitleTeacher[] = Course_teacher::where('courseID', '=', $value->courseID)->first();
+        }
+
+        return view('manageCourses',
+                   ['courseTitleTeacher' => $courseTitleTeacher,
+                    'courseTimeDaySection' => $courseTimeDaySection]);
+
       } else {
         return view('manageCourses');
       }
+
     } // end of index()
 
     public function courses(Request $request){
@@ -47,9 +59,15 @@ class CourseController extends Controller
       //This will grab the courseTitles from the course ids that the user has.
       if (count($courseIdsThatUserHas)){
         foreach ($courseIdsThatUserHas as $value) {
-          $coursesUserHas[] = Course_teacher::where('courseID','=',$value->course_id)->first();
+          $courseTimeDaySection[] = Course::where('id','=',$value->course_id)->first();
         }
-      }
+
+        //echo $coursesUserHas[0]->courseID;
+        foreach($courseTimeDaySection as $value) {
+          $courseTitleTeacher[] = Course_teacher::where('courseID', '=', $value->courseID)->first();
+        }
+
+      } // end if count(courseIdsThatUserHas)
 
 
       //TEACHER SEARCH-------------------------
@@ -61,10 +79,16 @@ class CourseController extends Controller
           $searchedCourses = Course_teacher::where('teacher', 'ilike', '%' .
           $request->get('searchedContent') . '%')->get();
           if (count($searchedCourses) > 0){
-            return view('manageCourses', ['teacherSearch' => $searchedCourses,  'completeCourses' => $coursesUserHas]);
+            return view('manageCourses',
+                       ['teacherSearch' => $searchedCourses,
+                        'courseTitleTeacher' => $courseTitleTeacher,
+                        'courseTimeDaySection' => $courseTimeDaySection]);
           } else {
-            return view('manageCourses', ['completeCourses' => $coursesUserHas]);
+            return view('manageCourses',
+                       ['courseTitleTeacher' => $courseTitleTeacher,
+                        'courseTimeDaySection' => $courseTimeDaySection]);
           }
+
         }
 
 
