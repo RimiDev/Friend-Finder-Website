@@ -49,6 +49,15 @@
                                             Accept
                                         </button>
                                     </form>
+                                @elseif($friendStatus[$i]->status === 'Confirmed')
+                                    <form method="post" action="">
+                                        {{ csrf_field() }}
+                                        <button id="addButton" type="submit" name="declineRequest"
+                                                value="{{$friendNames[$i]->email}}">
+                                            Delete
+                                        </button>
+                                    </form>
+
                             </h4>
                             @endif
                         @endfor
