@@ -35,7 +35,8 @@
                   <h3 id="boldText"> Courses </h3>
                 </div>
                 <div class="panel-body">
-                @if($completeCourses != 'No courses to display')
+
+                @if(isset($completeCourses))
                   @foreach($completeCourses as $course)
                   <h4>{{ $course->title . ' ' . $course->teacher }}</h4>
                   @endforeach
@@ -64,9 +65,13 @@
             </div>
 
             <div class="panel-body">
-
-
-
+            @if(isset($courseSearches[0]) && get_class($courseSearches[0]) ==  'App\Course_teacher')
+              @foreach($courseSearches as $course)
+              <h4>{{ $course->title . ' ' . $course->teacher }}</h4>
+              @endforeach
+            @else
+              <h4> No data found </h4>
+            @endif
 
         </div>
 </div>
