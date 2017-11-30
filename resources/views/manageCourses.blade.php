@@ -54,16 +54,22 @@
                 <form action="" method="post">
                     {{ csrf_field() }}
                     <h3 id="boldText">Search for courses:</h3>
-                    <input id="textSearch" type="text" name="name">
+                    <input id="textSearch" type="text" name="courseName">
                     <input type="submit" name="submitCourseSearch" value="Search">
                 </form>
             </div>
 
             <div class="panel-body">
 
+              @if(isset($completeCourses) && count($completeCourses) > 0)
+                  @foreach($completeCourses as $course)
+                  <h4 id="boldText">{{ $course->name }}</h4>
+                  @endforeach
+              @endif
 
 
-
+        </div>
+</div>
 </div>
 </body>
 </html>

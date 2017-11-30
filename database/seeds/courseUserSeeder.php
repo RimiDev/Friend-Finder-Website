@@ -2,7 +2,9 @@
 
 use Illuminate\Database\Seeder;
 
-class DatabaseSeeder extends Seeder
+use App\User_course;
+
+class courseUserSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -11,6 +13,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-         $this->call(courseUserSeeder::class);
+      User_course::create(['email' => 'Maximo@gmail.com',
+      'course_id' => '2']);
     }
 }

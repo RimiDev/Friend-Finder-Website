@@ -12,7 +12,7 @@ class CreateCourseTeacherTable extends Migration
     public function up()
     {
         Schema::create('course_teacher', function (Blueprint $table) {
-            $table->increments('courseID');
+            $table->integer('courseID');
             $table->string('title');
             $table->string('teacher');
         });

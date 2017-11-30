@@ -17,10 +17,10 @@ class CreateCoursesTable extends Migration
             $table->increments('id')->unique();
             $table->integer('classID');
             $table->integer('sectionID');
-			$table->integer('courseID');
+			      $table->integer('courseID');
             $table->integer('day');
-			$table->string('startTime');
-			$table->string('endTime');
+			      $table->string('startTime');
+			      $table->string('endTime');
         });
 
         $file = fopen(storage_path('../database/migrations/FakeTeachersListW2017.csv'), 'r');
@@ -75,7 +75,7 @@ class CreateCoursesTable extends Migration
                     if($teachTemp == $teacher[$j + 1]){
                         $courseIDs[] = $courseID;
                         //$titles[] = $title[$j];
-                        //$teachers[] = $teacher[$j]; 
+                        //$teachers[] = $teacher[$j];
                     }
                     else{
                         $courseID++;
@@ -95,13 +95,13 @@ class CreateCoursesTable extends Migration
                 }
             }
         }
-        
-        
+
+
         for($x = 1; $x < count($day) - 1; $x++){
            DB::table('courses')->insert(array('classID'=>$classIDs[$x-1], 'sectionID'=>$section[$x], 'courseID'=>$courseIDs[$x-1],
                'day'=>$day[$x], 'startTime'=>$start[$x], 'endTime'=>$end[$x]));
-        }        
-        
+        }
+
     }
     /**
      * Reverse the migrations.

@@ -13,9 +13,7 @@
 
 Route::get('/', 'HomeController@index');
 
-Route::get('/manageCourses', function () {
-	return view('manageCourses');
-});
+Route::get('/manageCourses', 'CourseController@index');
 
 Route::get('/manageFriends', 'FriendController@index');
 

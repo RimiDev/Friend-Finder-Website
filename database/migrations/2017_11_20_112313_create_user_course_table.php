@@ -12,8 +12,9 @@ class CreateUserCourseTable extends Migration
     public function up()
     {
         Schema::create('user_course', function (Blueprint $table) {
-            $table->string('email')->unique();
-            $table->string('course_id');
+            $table->increments('id')->unique();
+            $table->string('email');
+            $table->integer('course_id');
         });
     }
     /**
