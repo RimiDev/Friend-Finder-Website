@@ -7,6 +7,7 @@ use App\User;
 use App\Friend;
 use App\Course;
 use App\User_course;
+use App\Course_teacher;
 use Auth;
 
 class CourseController extends Controller
@@ -24,11 +25,15 @@ class CourseController extends Controller
     public function index(){
 
       //Select all Course ids that the user has.
-      $courseIdsThatUserHas = User_course::where('email','=',Auth::user()->email);
+      $courseIdsThatUserHas = User_course::where('email','=', Auth::user()->email)->get();
 
       //This will grab the courseTitles from the course ids that the user has.
-      $coursesUserHas = Course::where('courseId','=',$courseIdsThatUserHas);
-        return view('manageCourses', ['completeCourses' => $coursesUserHas]);
+      foreach ($courseIdsThatUserHas as $value) {
+      $coursesUserHas[] = Course_teacher::where('courseID','=',$value->course_id)->first();
+      }
+      return view('manageCourses', ['completeCourses' => $coursesUserHas]);
+    //return view('manageCourses', array('completeCourses' => $coursesUserHas));
+
 
     }
 

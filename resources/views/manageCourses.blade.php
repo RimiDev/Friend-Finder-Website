@@ -34,15 +34,15 @@
                 <div class="panel-heading">
                   <h3 id="boldText"> Courses </h3>
                 </div>
-
                 <div class="panel-body">
+                  @foreach($completeCourses as $course)
+                  <h4 id="boldText">{{ $course->title . ' ' . $course->teacher }}</h4>
+                  @endforeach
                     @if (session('status'))
                         <div class="alert alert-success">
                             {{ session('status') }}
                         </div>
                     @endif
-
-
                 </div>
             </div>
         </div>
@@ -61,11 +61,7 @@
 
             <div class="panel-body">
 
-              @if(isset($completeCourses) && count($completeCourses) > 0)
-                  @foreach($completeCourses as $course)
-                  <h4 id="boldText">{{ $course->name }}</h4>
-                  @endforeach
-              @endif
+
 
 
         </div>
