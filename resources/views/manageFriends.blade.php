@@ -34,30 +34,24 @@
                 <div class="panel-body">
 
                     @if(isset($friendNames) && count($friendNames) > 0 && isset($friendStatus) && count($friendStatus) > 0)
-                    @for($i = 0; $i < count($friendStatus); $i++)
-                        <h4 id="boldText">{{ $friendNames[$i]->name.' '.$friendNames[$i]->program.' '.$friendStatus[$i]->status }}
+                        @for($i = 0; $i < count($friendStatus); $i++)
+                            <h4 id="boldText">{{ $friendNames[$i]->name.' '.$friendNames[$i]->program.' '.$friendStatus[$i]->status }}
 
-                        @if($friendStatus[$i]->status === 'Request Received')
-                            <form method="post" action="">
-                                {{ csrf_field() }}
-                                    <button id="addButton" type="submit" name="acceptRequest"
-                                            value="{{$friendNames[$i]->email}}">
-                                        Accept
-                                    </button>
-                                    <button id="addButton" type="submit" name="declineRequest"
-                                            value="{{$friendNames[$i]->email}}">
-                                        Decline
-                                    </button>
-                            </form>
-                        </h4>
-                        @endif
-                    @endfor
-                    @endif
-
-                    @if (session('status'))
-                        <div class="alert alert-success">
-                            {{ session('status') }}
-                        </div>
+                                @if($friendStatus[$i]->status === 'Request Received')
+                                    <form method="post" action="">
+                                        {{ csrf_field() }}
+                                        <button id="addButton" type="submit" name="declineRequest"
+                                                value="{{$friendNames[$i]->email}}">
+                                            Decline
+                                        </button>
+                                        <button id="addButton" type="submit" name="acceptRequest"
+                                                value="{{$friendNames[$i]->email}}">
+                                            Accept
+                                        </button>
+                                    </form>
+                            </h4>
+                            @endif
+                        @endfor
                     @endif
                 </div>
             </div>
@@ -77,24 +71,23 @@
                 <div class="panel-body">
 
                     @if(isset($searchNames) && count($searchNames) > 0)
-                        @foreach($searchNames as $name)
+                        @foreach($searchNames as $names)
                             <form method="post" action="">
                                 {{ csrf_field() }}
                                 <h4 id="boldText">
-                                    {{ $name->name. ' ' .$name->program }}
-                                    <button id="addButton" type="submit" name="addFriendBtn" value="{{$name->email}}">
+                                    {{ $names->name. ' ' .$names->program }}
+                                    <button id="addButton" type="submit" name="addFriendBtn"
+                                            value="{{$names->email}}">
                                         Add Friend
                                     </button>
                                 </h4>
                             </form>
                         @endforeach
+                        {{ $searchNames->links() }}
+                    @else
+                        <p>No users with that name!</p>
                     @endif
 
-                    @if (session('status'))
-                        <div class="alert alert-success">
-                            {{ session('status') }}
-                        </div>
-                    @endif
                 </div>
             </div>
         </div>

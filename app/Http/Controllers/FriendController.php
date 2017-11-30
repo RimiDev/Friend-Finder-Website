@@ -40,7 +40,7 @@ class FriendController extends Controller
     {
         if ($request->get('submitFriendSearch'))
         {
-            $searchNames = $this->searchPeople($request);
+            $searchNames = $this->searchFriends($request);
 
             $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->get();
             foreach ($friendStatus as $friend)
@@ -66,17 +66,35 @@ class FriendController extends Controller
         else if ($request->get('acceptRequest'))
         {
             $this->acceptFriendRequest($request);
+
+            $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->get();
+            foreach ($friendStatus as $friend)
+                $friendNames[] = User::where('email', '=', $friend->friendEmail)->first();
+
+            if(isset($friendNames) && count($friendNames) > 0 && isset($friendStatus) && count($friendStatus) > 0)
+                return view('manageFriends', ['friendNames' => $friendNames, 'friendStatus' => $friendStatus]);
+            return view('manageFriends');
         }
         else if ($request->get('declineRequest'))
         {
             $this->declineFriendRequest($request);
+
+            $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->get();
+            foreach ($friendStatus as $friend)
+                $friendNames[] = User::where('email', '=', $friend->friendEmail)->first();
+
+            if(isset($friendNames) && count($friendNames) > 0 && isset($friendStatus) && count($friendStatus) > 0)
+                return view('manageFriends', ['friendNames' => $friendNames, 'friendStatus' => $friendStatus]);
+            return view('manageFriends');
         }
     }
 
-    public function searchPeople(Request $request)
+    private function searchFriends(Request $request)
     {
         $searchNames = User::where(('name'), 'ilike', '%' . $request->get('name') . '%')->
-            where('name', '!=', Auth::user()->name)->paginate(10);
+            where('name', '!=', Auth::user()->name)->
+            whereNotIn('email', function($q){ $q->select('friendEmail')->from('friends')->
+            where('email', '=', Auth::user()->email); })->paginate(10);
 
         return $searchNames;
     }
@@ -106,11 +124,19 @@ class FriendController extends Controller
 
     private function acceptFriendRequest(Request $request)
     {
-        //Update table change request sent and request received to confirmed
+        Friend::where('email', '=', Auth::user()->email)->
+        where('friendEmail', '=', $request->get('acceptRequest'))->update(['status' => 'Confirmed']);
+
+        Friend::where('email', '=', $request->get('acceptRequest'))->
+        where('friendEmail', '=', Auth::user()->email)->update(['status' => 'Confirmed']);
     }
 
     private function declineFriendRequest(Request $request)
     {
-        //Remove request sent and request received from table
+        Friend::where('email', '=', Auth::user()->email)->
+            where('friendEmail', '=', $request->get('declineRequest'))->delete();
+
+        Friend::where('email', '=', $request->get('declineRequest'))->
+            where('friendEmail', '=', Auth::user()->email)->delete();
     }
 }
