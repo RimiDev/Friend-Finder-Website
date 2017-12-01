@@ -159,12 +159,11 @@ class CourseController extends Controller
 
         } // END OF COURSE TITLE SEARCH
 
-      } if ($request->get('removeCourseBtn')){
+      } else if ($request->get('removeCourseBtn')){
             //REMOVE && ADD BUTTONS
                 //Remove button clicked on a specific course.
                 User_course::where('course_id','=', $request->get('removeCourseBtn'))
                 ->where('email', '=', Auth::user()->email)->delete();
-
 
                 //Get user courses
                 $courseTitleTeacher = self::getUserCourses('1');
@@ -173,7 +172,24 @@ class CourseController extends Controller
                 return view('manageCourses',
                            ['courseTitleTeacher' => $courseTitleTeacher,
                             'courseTimeDaySection' => $courseTimeDaySection]);
-            } // end of the remove button //end of submitCourseSearch POST REQUEST------
+              // end of the remove button
+            } else if ($request->get('addCourseBtn')){
+
+              //Add user to database
+              $courseAdd = new User_course();
+              $courseAdd->email = Auth::user()->email;
+              $courseAdd->course_id = $request->get('addCourseBtn');
+              $courseAdd->save();
+
+              //Get user courses
+              $courseTitleTeacher = self::getUserCourses('1');
+              $courseTimeDaySection = self::getUserCourses('2');
+
+              return view('manageCourses',
+                         ['courseTitleTeacher' => $courseTitleTeacher,
+                          'courseTimeDaySection' => $courseTimeDaySection]);
+
+            }
 
     }// end of Course()
 
