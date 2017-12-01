@@ -99,19 +99,81 @@
 
             <div class="panel-body">
               <!--IF STATE
-              <!--Teacher search-->
-            @if(isset($teacherSearch[0]) && get_class($teacherSearch[0]) ==  'App\Course_teacher')
-              @foreach($teacherSearch as $course)
-                <h4>{{ $course->title . ' ' . $course->teacher }}</h4>
-              @endforeach
-            @endif
+              <!-- TEACHER SEARCH -->
+              @if(isset($teacherSearch) && isset($teacherTimeDaySectionSearch))
+                @for ($i = 0; $i < count($teacherSearch); $i++)
+                  <h4 id="boldText">{{ $teacherSearch[$i]->title . ' '
+                     . $teacherSearch[$i]->teacher }}</h4>
+                     <?php
+                     switch($teacherTimeDaySectionSearch[$i]->day){
+                              case 1: echo 'Monday';
+                                      break;
+                              case 2: echo 'Tuesday';
+                                      break;
+                              case 3: echo 'Wednesday';
+                                      break;
+                              case 4: echo 'Thursday';
+                                      break;
+                              case 5: echo 'Friday';
+                                      break;
+                     }
+                     ?>
+                    {{ $teacherTimeDaySectionSearch[$i]->startTime . '-'
+                     . $teacherTimeDaySectionSearch[$i]->endTime . ' | Section: '
+                     . $teacherTimeDaySectionSearch[$i]->sectionID }}
+                  @endfor
+               @endif
 
-            <!--Course number search-->
-            @if(isset($courseNumberSearch))
-              @foreach($courseNumberSearch as $course)
-                <h4>{{ $course->title . ' ' . $course->teacher }}</h4>
-              @endforeach
-            @endif
+
+               <!-- COURSE NUMBER SEARCH -->
+               @if(isset($courseNumberTitleTeacher) && isset($courseNumberTimeDaySection))
+                 @for ($i = 0; $i < count($courseNumberTitleTeacher); $i++)
+                   <h4 id="boldText"> {{ $courseNumberTitleTeacher[$i]->title . ' '
+                      . $courseNumberTitleTeacher[$i]->teacher }}</h4>
+                      <?php
+                      switch($courseNumberTimeDaySection[$i]->day){
+                               case 1: echo 'Monday';
+                                       break;
+                               case 2: echo 'Tuesday';
+                                       break;
+                               case 3: echo 'Wednesday';
+                                       break;
+                               case 4: echo 'Thursday';
+                                       break;
+                               case 5: echo 'Friday';
+                                       break;
+                      }
+                      ?>
+                     {{ $courseNumberTimeDaySection[$i]->startTime . '-'
+                      . $courseNumberTimeDaySection[$i]->endTime . ' | Section: '
+                      . $courseNumberTimeDaySection[$i]->sectionID }}
+                   @endfor
+                @endif
+
+                <!-- COURSE TITLE SEARCH -->
+                @if(isset($titleSearch) && isset($titleTimeDaySectionSearch))
+                  @for ($i = 0; $i < count($titleSearch); $i++)
+                    <h4 id="boldText"> {{ $titleSearch[$i]->title . ' '
+                       . $titleTimeDaySectionSearch[$i]->teacher }}</h4>
+                       <?php
+                       switch($titleTimeDaySectionSearch[$i]->day){
+                                case 1: echo 'Monday';
+                                        break;
+                                case 2: echo 'Tuesday';
+                                        break;
+                                case 3: echo 'Wednesday';
+                                        break;
+                                case 4: echo 'Thursday';
+                                        break;
+                                case 5: echo 'Friday';
+                                        break;
+                       }
+                       ?>
+                      {{ $titleTimeDaySectionSearch[$i]->startTime . '-'
+                       . $titleTimeDaySectionSearch[$i]->endTime . ' | Section: '
+                       . $titleTimeDaySectionSearch[$i]->sectionID }}
+                    @endfor
+                 @endif
 
         </div>
 </div>

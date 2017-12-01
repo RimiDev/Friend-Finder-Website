@@ -86,13 +86,14 @@ class CourseController extends Controller
           $teacherSearch = Course_teacher::where('teacher', 'ilike', '%' .
           $request->get('searchedContent') . '%')->get();
           //If there aren't any teachers name that match the search, no results to display.
-          if (count($searchedCourses) > 0){
+          if (count($teacherSearch) > 0){
             foreach($teacherSearch as $search){
             $timeDaySectionSearch[] = Course::where('courseID', '=', $search->courseID)->first();
           }
-            
+
             return view('manageCourses',
                        ['teacherSearch' => $teacherSearch,
+                        'teacherTimeDaySectionSearch' => $timeDaySectionSearch,
                         'courseTitleTeacher' => $courseTitleTeacher,
                         'courseTimeDaySection' => $courseTimeDaySection]);
           } else {
@@ -109,19 +110,21 @@ class CourseController extends Controller
         if ($_POST['searchOption'] == 'courseNumber'){
 
           //Grabbing the class ID for the course number.
-          $searchClassId = Classes::where('classNumber', '=', $request->get('searchedContent'))->get();
+          $classIdSearch = Classes::where('classNumber', '=', $request->get('searchedContent'))->get();
 
           //If there are not classIDs, then there will be no results.
-          if(count($searchClassId) > 0){
+          if(count($classIdSearch) > 0){
             //Search for the courseID depending on the classID.
-            $searchCourseId = Course::where('courseID', '=', $searchClassId[0]->classID)->get();
-            //Iterate through the searchCourseId array to make an array of all the course titles/teacher names
+            $courseNumberTimeDaySection = Course::where('courseID', '=', $classIdSearch[0]->classID)->get();
+            //Iterate through the courseIdSearch array to make an array of all the course titles/teacher names
             //with the same courseID.
-            foreach($searchCourseId as $courseIds){
-            $searchCourseTitleAndTeacher[] = Course_teacher::where('courseID', '=', $courseIds->courseID)->first();
+            foreach($courseNumberTimeDaySection as $courseIds){
+            $courseNumberTitleTeacher[] = Course_teacher::where('courseID', '=', $courseIds->courseID)->first();
             }
+
             return view('manageCourses',
-                       ['courseNumberSearch' => $searchCourseTitleAndTeacher,
+                       ['courseNumberTimeDaySection' => $courseNumberTimeDaySection,
+                        'courseNumberTitleTeacher' => $courseNumberTitleTeacher,
                         'courseTitleTeacher' => $courseTitleTeacher,
                         'courseTimeDaySection' => $courseTimeDaySection]);
           } else {
@@ -133,8 +136,28 @@ class CourseController extends Controller
         } // end of the COURSE NUMBER SEARCH------------------------------------
 
         if ($_POST['searchOption'] == 'courseTitle'){
-          echo 'Hello';
-        }
+
+          $titleSearch = Course_teacher::where('title', 'ilike', '%' .
+          $request->get('searchedContent') . '%')->get();
+          //If there aren't any teachers name that match the search, no results to display.
+          if (count($titleSearch) > 0){
+            foreach($titleSearch as $search){
+            $timeDaySectionSearch[] = Course::where('courseID', '=', $search->courseID)->first();
+          }
+
+            return view('manageCourses',
+                       ['titleSearch' => $titleSearch,
+                        'titleTimeDaySectionSearch' => $timeDaySectionSearch,
+                        'courseTitleTeacher' => $courseTitleTeacher,
+                        'courseTimeDaySection' => $courseTimeDaySection]);
+          } else {
+            //No results
+            return view('manageCourses',
+                       ['courseTitleTeacher' => $courseTitleTeacher,
+                        'courseTimeDaySection' => $courseTimeDaySection]);
+          }
+
+        } // END OF COURSE TITLE SEARCH
 
       } if ($request->get('removeCourseBtn')){
             //REMOVE && ADD BUTTONS
