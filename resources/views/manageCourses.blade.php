@@ -35,7 +35,8 @@
                   <h3 id="boldText"> Courses </h3>
                 </div>
                 <div class="panel-body">
-
+                  <form action="" method="post">
+                  {{ csrf_field() }}
                 @if(isset($courseTitleTeacher))
                 @for ($i = 0; $i < count($courseTitleTeacher); $i++)
                   <h4 id="boldText">{{ $courseTitleTeacher[$i]->title . ' '
@@ -63,10 +64,13 @@
                            Remove course
                        </button>
 
+
                   @endfor
+
                 @else
                   <h4 id="boldText"> No courses registered </h4>
                 @endif
+                </form>
                     @if (session('status'))
                         <div class="alert alert-success">
                             {{ session('status') }}

@@ -18,5 +18,11 @@ class courseUserSeeder extends Seeder
 
       User_course::create(['email' => 'Maximo@gmail.com',
       'course_id' => '3']);
+
+      User_course::create(['email' => 'Maximo@gmail.com',
+      'course_id' => '55']);
+
+      User_course::create(['email' => 'Maximo@gmail.com',
+      'course_id' => '2000']);
     }
 }

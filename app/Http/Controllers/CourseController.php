@@ -13,6 +13,7 @@ use Auth;
 
 class CourseController extends Controller
 {
+
     public function __construct() {
         $this->middleware('auth');
     }
@@ -23,36 +24,7 @@ class CourseController extends Controller
         $couseArray = array();
     }
 
-    public function index(){
-
-      //Select all ids that the user has.
-      $courseIdsThatUserHas = User_course::where('email','=', Auth::user()->email)->get();
-
-      //This will grab the row of the table that has the
-      //startTime,endTime,Section,Day.
-      if (count($courseIdsThatUserHas) > 0){
-        foreach ($courseIdsThatUserHas as $value) {
-          $courseTimeDaySection[] = Course::where('id','=',$value->course_id)->first();
-        }
-
-        //This will grab the the row of the table that has the
-        //Title of the course and teacher.
-        foreach($courseTimeDaySection as $value) {
-          $courseTitleTeacher[] = Course_teacher::where('courseID', '=', $value->courseID)->first();
-        }
-
-        return view('manageCourses',
-                   ['courseTitleTeacher' => $courseTitleTeacher,
-                    'courseTimeDaySection' => $courseTimeDaySection]);
-
-      } else {
-        return view('manageCourses');
-      }
-
-    } // end of index()
-
-    public function courses(Request $request){
-
+    public function getUserCourses(String $req){
       //Select all Course ids that the user has.
       $courseIdsThatUserHas = User_course::where('email','=', Auth::user()->email)->get();
 
@@ -62,36 +34,75 @@ class CourseController extends Controller
           $courseTimeDaySection[] = Course::where('id','=',$value->course_id)->first();
         }
 
-        //echo $coursesUserHas[0]->courseID;
         foreach($courseTimeDaySection as $value) {
           $courseTitleTeacher[] = Course_teacher::where('courseID', '=', $value->courseID)->first();
         }
 
-      } // end if count(courseIdsThatUserHas)
+        if ($req == '1' ){
+          return $courseTitleTeacher;
+        } else {
+          return $courseTimeDaySection;
+        }
+
+      } else {
+        return null;
+      }
+
+      //return $courseTitleTeacher,$courseTimeDaySection;
+
+    } // end of getUserCourses
+
+    public function index(){
+
+          //Get user courses
+          $courseTitleTeacher = self::getUserCourses('1');
+          $courseTimeDaySection = self::getUserCourses('2');
+
+          if ($courseTitleTeacher == null || $courseTimeDaySection == null){
+            return view('manageCourses');
+          } else {
+          return view('manageCourses',
+                     ['courseTitleTeacher' => $courseTitleTeacher,
+                      'courseTimeDaySection' => $courseTimeDaySection]);
+         }
 
 
-      //TEACHER SEARCH-------------------------
+    } // end of index()
+
+
+    public function courses(Request $request){
+
+    //Get user courses
+    $courseTitleTeacher = self::getUserCourses('1');
+    $courseTimeDaySection = self::getUserCourses('2');
+
+
+      //SEARCH------------------------------------------------------------------
       if ($request->get('submitCourseSearch')){
 
-        //Check if the user wants to search for a course by teacher.
+        //TEACHER SEARCH-------------------------
         if ($_POST['searchOption'] == 'teacher'){
           //This will grab the courseName that the user has searched for.
-          $searchedCourses = Course_teacher::where('teacher', 'ilike', '%' .
+          $teacherSearch = Course_teacher::where('teacher', 'ilike', '%' .
           $request->get('searchedContent') . '%')->get();
+          //If there aren't any teachers name that match the search, no results to display.
           if (count($searchedCourses) > 0){
+            foreach($teacherSearch as $search){
+            $timeDaySectionSearch[] = Course::where('courseID', '=', $search->courseID)->first();
+          }
+            
             return view('manageCourses',
-                       ['teacherSearch' => $searchedCourses,
+                       ['teacherSearch' => $teacherSearch,
                         'courseTitleTeacher' => $courseTitleTeacher,
                         'courseTimeDaySection' => $courseTimeDaySection]);
           } else {
+            //No results
             return view('manageCourses',
                        ['courseTitleTeacher' => $courseTitleTeacher,
                         'courseTimeDaySection' => $courseTimeDaySection]);
           }
 
-        }
-
-      } // End of teacher search
+        } // end of the TEACHER SEARCH------------------------------------------
 
 
         //COURSE NUMBER SEARCH------------------------
@@ -109,31 +120,38 @@ class CourseController extends Controller
             foreach($searchCourseId as $courseIds){
             $searchCourseTitleAndTeacher[] = Course_teacher::where('courseID', '=', $courseIds->courseID)->first();
             }
-            return view('manageCourses', ['courseNumberSearch' => $searchCourseTitleAndTeacher, 'completeCourses' => $coursesUserHas]);
+            return view('manageCourses',
+                       ['courseNumberSearch' => $searchCourseTitleAndTeacher,
+                        'courseTitleTeacher' => $courseTitleTeacher,
+                        'courseTimeDaySection' => $courseTimeDaySection]);
           } else {
-            return view('manageCourses', ['completeCourses' => $coursesUserHas]);
+            return view('manageCourses',
+                       ['courseTitleTeacher' => $courseTitleTeacher,
+                        'courseTimeDaySection' => $courseTimeDaySection]);
           }
 
-        } // end of the COURSE NUMBER SEARCH--------------------------------
+        } // end of the COURSE NUMBER SEARCH------------------------------------
 
         if ($_POST['searchOption'] == 'courseTitle'){
           echo 'Hello';
         }
 
-      } //end of submitCourseSearch POST REQUEST------
+      } if ($request->get('removeCourseBtn')){
+            //REMOVE && ADD BUTTONS
+                //Remove button clicked on a specific course.
+                User_course::where('course_id','=', $request->get('removeCourseBtn'))
+                ->where('email', '=', Auth::user()->email)->delete();
 
 
-      //REMOVE && ADD BUTTONS
+                //Get user courses
+                $courseTitleTeacher = self::getUserCourses('1');
+                $courseTimeDaySection = self::getUserCourses('2');
 
-      //Remove button clicked on a specific course.
-      if($request->get('removeCourseBtn')){
+                return view('manageCourses',
+                           ['courseTitleTeacher' => $courseTitleTeacher,
+                            'courseTimeDaySection' => $courseTimeDaySection]);
+            } // end of the remove button //end of submitCourseSearch POST REQUEST------
 
+    }// end of Course()
 
-      }
-
-
-
-
-
-
-    }// end of CourseController
+  }// end of CourseController
