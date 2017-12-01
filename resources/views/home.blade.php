@@ -25,21 +25,45 @@
                 <li><a href="/findFriendBreaks">Find Friend Breaks</a></li>
             </ul>
         </div>
+        <br/><br/><br/>
 
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
                 <div id="block">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <p> blah </p>
+                            <h3 id="boldText"> Homepage </h3>
                         </div>
                         <div class="panel-body1">
+                            @if(isset($friendNames) && count($friendNames) > 0 && isset($friendStatus) && count($friendStatus) > 0)
+                        @for($i = 0; $i < count($friendStatus); $i++)
+                            <h4 id="boldText">
+                    {{ $friendNames[$i]->name.' '.$friendNames[$i]->program.' '.$friendStatus[$i]->status }}
 
-                            @if (session('status'))
-                                <div class="alert alert-success">
-                                    {{ session('status') }}
-                                </div>
+                                @if($friendStatus[$i]->status === 'Request Received')
+                                    <form method="post" action="">
+                                        {{ csrf_field() }}
+                                        <button id="addButton" type="submit" name="declineRequest"
+                                                value="{{$friendNames[$i]->email}}">
+                                            Decline
+                                        </button>
+                                        <button id="addButton" type="submit" name="acceptRequest"
+                                                value="{{$friendNames[$i]->email}}">
+                                            Accept
+                                        </button>
+                                    </form>
+                                @elseif($friendStatus[$i]->status === 'Confirmed')
+                                    <form method="post" action="">
+                                        {{ csrf_field() }}
+                                        <button id="addButton" type="submit" name="declineRequest"
+                                                value="{{$friendNames[$i]->email}}">
+                                            Delete
+                                        </button>
+                                    </form>
+                            </h4>
                             @endif
+                        @endfor
+                    @endif
                         </div>
                     </div>
                 </div>
