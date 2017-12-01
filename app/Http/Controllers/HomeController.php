@@ -30,27 +30,6 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-        /*$courseTitleTeacher = self::getUserCourses('1');
-        $courseTimeDaySection = self::getUserCourses('2');
-
-        if ($courseTitleTeacher == null || $courseTimeDaySection == null){
-            return view('home',
-                ['errorMessage' => 'Find your courses here!']);
-        } else {
-            return view('home',
-                ['courseTitleTeacher' => $courseTitleTeacher,
-                    'courseTimeDaySection' => $courseTimeDaySection,
-                    'errorMessage' => 'Find your courses here']);
-        }
-
-        $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->get();
-        foreach ($friendStatus as $friend)
-            $friendNames[] = User::where('email', '=', $friend->friendEmail)->first();
-
-        if(isset($friendNames) && count($friendNames) > 0 && isset($friendStatus) && count($friendStatus) > 0)
-            return view('home', ['friendNames' => $friendNames, 'friendStatus' => $friendStatus]);
-        return view('home');*/
-
         $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->get();
         foreach ($friendStatus as $friend)
             $friendNames[] = User::where('email', '=', $friend->friendEmail)->first();
@@ -171,13 +150,7 @@ class HomeController extends Controller
         Friend::where('email', '=', $request->get('declineRequest'))->
             where('friendEmail', '=', Auth::user()->email)->delete();
     }
-
-    /*public function getCourses(Request $request) {
-        $session = $request->session();
-
-        $couseArray = array();
-    }*/
-
+    
     public function getUserCourses(String $req){
         //Select all Course ids that the user has.
         $courseIdsThatUserHas = User_course::where('email','=', Auth::user()->email)->get();
