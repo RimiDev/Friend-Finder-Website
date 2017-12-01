@@ -30,6 +30,22 @@ class FriendBreaksController extends Controller
     }
 
     /**
+     * Gets the users friends
+     */
+    public function getUserFriends() {
+
+        $friends = Friend::where('email','=', Auth::user()->email)->get();
+    }
+
+    /**
+     * Fetches the friends request from the user input
+     * @param Request $request
+     */
+    public function friends(Request $request) {
+
+    }
+
+    /**
      * Checks if all the fields from the user are valid inputs
      * @return bool
      */

@@ -32,3 +32,5 @@ Route::post('/manageCourses', 'CourseController@courses');
 //Route::delete('/manageCourses','CourseController@delete');
 
 Route::get('/findFriendBreaks', 'FriendBreaksController@index');
+
+Route::post('/findFriendBreaks', 'FriendBreaksController@friends');
