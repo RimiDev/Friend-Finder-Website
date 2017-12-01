@@ -25,22 +25,46 @@
                 <li><a href="/manageFriends">Manage Friends</a></li>
             </ul>
         </div>
+        <br/><br/><br/>
 
-        <div class="row">
+        <div id="block">
             <div class="col-md-8 col-md-offset-2">
                 <div class="panel panel-default">
                     <div class="panel-heading">
+                        <h3 id="boldText"> Friends on breaks </h3>
                     </div>
-
                     <div class="panel-body">
                         @if (session('status'))
                             <div class="alert alert-success">
                                 {{ session('status') }}
                             </div>
                         @endif
-
-
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="block">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <form id="breakForm" action="" method="post">
+                        {{ csrf_field() }}
+                        <h3 id="boldText">Search for friends with breaks:</h3>
+                        <input id="nameBreakSearch" type="text" name="name">
+                        <h3 id="boldText">Start Time:</h3>
+                        <input id="startTimeSearch" type="text" name="name">
+                        <h3 id="boldText">End Time:</h3>
+                        <input id="endTimeSearch" type="text" name="name"><br/><br/>
+                        <input type="submit" name="submitSearchBreaks" value="Search">
+                    </form>
+                </div>
+
+                <div class="panel-body">
+                    @if (session('status'))
+                        <div class="alert alert-success">
+                            {{ session('status') }}
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

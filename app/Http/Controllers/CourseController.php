@@ -18,12 +18,6 @@ class CourseController extends Controller
         $this->middleware('auth');
     }
 
-    public function getCourses(Request $request) {
-        $session = $request->session();
-
-        $couseArray = array();
-    }
-
     public function getUserCourses(String $req){
       //Select all Course ids that the user has.
       $courseIdsThatUserHas = User_course::where('email','=', Auth::user()->email)->get();
