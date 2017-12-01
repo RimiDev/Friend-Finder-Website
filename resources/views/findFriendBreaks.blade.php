@@ -50,7 +50,8 @@
                     <form id="breakForm" action="" method="post">
                         {{ csrf_field() }}
                         <h3 id="boldText">Search for friends with breaks:</h3>
-                        <input id="nameBreakSearch" type="text" name="name">
+                        <h3 id="boldText">Day:</h3>
+                        <input id="dayBreakSearch" type="text" name="name">
                         <h3 id="boldText">Start Time:</h3>
                         <input id="startTimeSearch" type="text" name="name">
                         <h3 id="boldText">End Time:</h3>

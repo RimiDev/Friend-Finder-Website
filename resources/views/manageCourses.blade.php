@@ -39,8 +39,8 @@
                   {{ csrf_field() }}
                 @if(isset($courseTitleTeacher))
                 @for ($i = 0; $i < count($courseTitleTeacher); $i++)
-                  <h4 id="boldText">{{ $courseTitleTeacher[$i]->title . ' '
-                       . $courseTitleTeacher[$i]->teacher }}</h4>
+                  <h4 id="boldText">{!! $courseTitleTeacher[$i]->title . "<br/>"
+                       . $courseTitleTeacher[$i]->teacher !!}</h4>
                        <?php
                        switch($courseTimeDaySection[$i]->day){
                                 case 1: echo 'Monday';
@@ -192,7 +192,7 @@
                  @endif
 
                  @else
-                 <h4> No courses found </h4>
+                 <h4> {{ $errorMessage }} </h4>
                  @endif
 
         </div>

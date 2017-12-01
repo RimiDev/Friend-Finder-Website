@@ -11,6 +11,22 @@ use App\Course_teacher;
 use App\Classes;
 use Auth;
 
+/**
+* This class is the controller for the 'manage courses'.
+* The index() manages whenever the user first goes onto the manage courses section of the website.
+* -> Receives all the courses that the authenticated user has and displays it.
+* The courses() manages the searches that the user does.
+* -> Teacher/Course title/Course number search will display results depending on the search.
+* -> Teacher/Course title can be approximently the same as the result. ex: Kari will give Karissa.
+* -> Course number needs to be a direct search. ex 101-MQ will ONLY give 101-MQ
+* -> This method also takes care of the removing and adding of the courses when the user clicks the buttons.
+* -> Add simply adds the new course to the users' database and will also display it in his new list.
+* -> Remove simply removes the course and will display his new list without that course.
+* The getUserCourses() is a method that simply grabs the courses that the users has.
+* which is called on Index(), and whenever you add/remove a course (to refresh it).
+* @author Maxime Lacasse
+* @version 1.0
+**/
 class CourseController extends Controller
 {
 
@@ -53,11 +69,13 @@ class CourseController extends Controller
           $courseTimeDaySection = self::getUserCourses('2');
 
           if ($courseTitleTeacher == null || $courseTimeDaySection == null){
-            return view('manageCourses');
+            return view('manageCourses',
+                        ['errorMessage' => 'Find your courses here!']);
           } else {
           return view('manageCourses',
                      ['courseTitleTeacher' => $courseTitleTeacher,
-                      'courseTimeDaySection' => $courseTimeDaySection]);
+                      'courseTimeDaySection' => $courseTimeDaySection,
+                      'errorMessage' => 'Find your courses here']);
          }
 
 
@@ -94,7 +112,8 @@ class CourseController extends Controller
             //No results
             return view('manageCourses',
                        ['courseTitleTeacher' => $courseTitleTeacher,
-                        'courseTimeDaySection' => $courseTimeDaySection]);
+                        'courseTimeDaySection' => $courseTimeDaySection,
+                        'errorMessage' => 'No teacher found with that name!']);
           }
 
         } // end of the TEACHER SEARCH------------------------------------------
@@ -124,11 +143,13 @@ class CourseController extends Controller
           } else {
             return view('manageCourses',
                        ['courseTitleTeacher' => $courseTitleTeacher,
-                        'courseTimeDaySection' => $courseTimeDaySection]);
+                        'courseTimeDaySection' => $courseTimeDaySection,
+                        'errorMessage' => 'No course found with that course number!']);
           }
 
         } // end of the COURSE NUMBER SEARCH------------------------------------
 
+        //COURSE TITLE SEARCH------------------------
         if ($_POST['searchOption'] == 'courseTitle'){
 
           $titleSearch = Course_teacher::where('title', 'ilike', '%' .
@@ -148,11 +169,13 @@ class CourseController extends Controller
             //No results
             return view('manageCourses',
                        ['courseTitleTeacher' => $courseTitleTeacher,
-                        'courseTimeDaySection' => $courseTimeDaySection]);
+                        'courseTimeDaySection' => $courseTimeDaySection,
+                        'errorMessage' => 'No course found with that title!']);
           }
 
-        } // END OF COURSE TITLE SEARCH
+        } // END OF COURSE TITLE SEARCH-----------------------------------------
 
+        //ADD BUTTON-------------------------------
       } else if ($request->get('removeCourseBtn')){
             //REMOVE && ADD BUTTONS
                 //Remove button clicked on a specific course.
@@ -165,9 +188,31 @@ class CourseController extends Controller
 
                 return view('manageCourses',
                            ['courseTitleTeacher' => $courseTitleTeacher,
-                            'courseTimeDaySection' => $courseTimeDaySection]);
-              // end of the remove button
+                            'courseTimeDaySection' => $courseTimeDaySection,
+                            'errorMessage' => 'Course have been removed!']);
+              // end of the remove button---------------------------------------
+
+              //ADD BUTTON----------------------------
             } else if ($request->get('addCourseBtn')){
+
+              $courseTimeDaySection = self::getUserCourses('2');
+              $userHasCourse = true;
+
+              // self::debug($courseTimeDaySection[1]->id);
+              // self::debug($request->get('addCourseBtn'));
+
+              //Check if user doesn't already have this course.
+              for($i = 0; $i < count($courseTimeDaySection); $i++){
+              if ($request->get('addCourseBtn') == $courseTimeDaySection[$i]->id){
+                //User already have the course.
+                return view('manageCourses',
+                           ['courseTitleTeacher' => $courseTitleTeacher,
+                            'courseTimeDaySection' => $courseTimeDaySection,
+                            'errorMessage' => 'Cannot add two of the same courses!']);
+                //$userHasCourse = false;
+              }
+            }
+            //User doesn't have the course, add it!
 
               //Add user to database
               $courseAdd = new User_course();
@@ -181,10 +226,16 @@ class CourseController extends Controller
 
               return view('manageCourses',
                          ['courseTitleTeacher' => $courseTitleTeacher,
-                          'courseTimeDaySection' => $courseTimeDaySection]);
+                          'courseTimeDaySection' => $courseTimeDaySection,
+                          'errorMessage' => 'Course has been added!']);
 
             }
 
     }// end of Course()
+
+    function debug($msg) {
+       $msg = str_replace('"', '\\"', $msg); // Escaping double quotes
+        echo "<script>console.log(\"$msg\")</script>";
+}
 
   }// end of CourseController
