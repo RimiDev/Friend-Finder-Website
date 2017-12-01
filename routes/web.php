@@ -13,10 +13,6 @@
 
 Route::get('/', 'HomeController@index');
 
-Route::get('/manageCourses', function () {
-	return view('manageCourses');
-});
-
 Route::get('/manageFriends', 'FriendController@index');
 
 Route::get('/findFriendBreaks', function () {
@@ -29,3 +25,8 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 Route::post('/manageFriends', 'FriendController@searchSaveUpdateFriends');
 
+Route::get('/manageCourses', 'CourseController@index');
+
+Route::post('/manageCourses', 'CourseController@courses');
+
+//Route::delete('/manageCourses','CourseController@delete');
