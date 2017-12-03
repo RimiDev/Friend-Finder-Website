@@ -35,8 +35,8 @@
 
                     @if(isset($friendNames) && count($friendNames) > 0 && isset($friendStatus) && count($friendStatus) > 0)
                         @for($i = 0; $i < count($friendStatus); $i++)
-                            <h4 id="boldText">{{ $friendNames[$i]->name.' '.$friendNames[$i]->program.' '.$friendStatus[$i]->status }}
-
+                            <h4 id="boldText">
+                                {{ $friendNames[$i]->name.' '.$friendNames[$i]->program.' '.$friendStatus[$i]->status }}
                                 @if($friendStatus[$i]->status === 'Request Received')
                                     <form method="post" action="">
                                         {{ csrf_field() }}
@@ -59,8 +59,12 @@
                                     </form>
 
                             </h4>
-                            @endif
+                                @endif
                         @endfor
+                    @else
+                        <h4 id="boldText">
+                            No friends
+                        </h4>
                     @endif
                 </div>
             </div>
