@@ -217,6 +217,8 @@ class CourseController extends Controller
 
             }
 
+            }
+
 
             }
             //User doesn't have the course, add it!
