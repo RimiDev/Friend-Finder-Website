@@ -31,7 +31,7 @@ class FriendBreaksController extends Controller
      * Returns the courses the user has
      * @return mixed
      */
-    public function getUserCourses() {
+    /*public function getUserCourses() {
         $courseInfo[] = null;
         // Get the user courses
         $userCourse[] = User_course::where('email', '=', Auth::user()->email)->get();
@@ -44,7 +44,7 @@ class FriendBreaksController extends Controller
         }
 
         return $userCourseInfo;
-    }
+    }*/
 
     /**
      * Gets the users friends email
@@ -70,7 +70,7 @@ class FriendBreaksController extends Controller
     /**
      * Gets the users friends courses
      */
-    public function getFriendCourses($arrayFriendsEmail) {
+    public function getFriendBreaks($arrayFriendsEmail) {
         // Array of User_course objects
         $arrayFriendCourses[] = null;
         // Array of course ID
@@ -78,10 +78,50 @@ class FriendBreaksController extends Controller
         // Array of Course objects
         $arrayCourses[] = null;
 
-        // Fetch the courses the user friends has
-        for ($i = 0; $i < count($arrayFriendsEmail); $i++) {
-            $arrayFriendCourses[] = User_course::where('email', '=', $arrayFriendsEmail[$i])->first();
+        // Get user course for a specific day
+        /*$courseForDay[] = User_course::where('email', '=', Auth::user()->email)->
+            where('courseID', function ($q) { $q->select('id')->from('courses')->
+            where('day', '=', $this->getDay()); })->get();*/
+
+        $courseForDay[] = Course::where('day', '=', $this->getDay()->
+            where('id', '=', function ($q) { $q->select('courseID')->from('user_course')->
+            where('email', '=', Auth::user()->email);}))->get();
+
+        // Arrays
+        $breakArray[] = null;
+        $breakFriendsArray[] = null;
+        $friendsArray[] = null;
+
+        // Get breaks
+        if (count($courseForDay) > 1) {
+            for ($i = 0; $i < count($courseForDay); $i++) {
+                $endFirst = $courseForDay[$i]->endtime;
+                if ($i++ < count($courseForDay)) {
+                    $startSecond = $courseForDay[$i++]->starttime;
+                    $i = $i - 2;
+                }
+                $breakArray[] = $endFirst;
+                $breakArray[] = $startSecond;
+            }
         }
+
+        for ($i = 0; $i < count($arrayFriendsEmail); $i++) {
+            $friendCourse = Course::where('day', '=', $this->getDay()->
+                where('id', '=', function ($q, $arrayFriendsEmail, $i) { $q->select('courseID')->from('user_course')->
+                where('email', '=', $arrayFriendsEmail[$i]);}))->get();
+        }
+
+
+
+        // Fetch courses the users friends have
+        /*for ($i = 0; $i < count($arrayFriendsEmail); $i++) {
+            $arrayFriendCourses[] = User_course::where('email', '=', $arrayFriendsEmail[$i])->
+                where('courseID', function ($q) { $q->select('id')->from('courses')->
+                where('day', '=', $this->getDay());})->get();
+        }*/
+
+        // Get friend breaks
+        
 
         // Get the class ID of each course
         foreach($arrayFriendCourses as $course) {
