@@ -207,17 +207,17 @@ class CourseController extends Controller
               if (isset($courseTimeDaySection)){
 
               for($i = 0; $i < count($courseTimeDaySection); $i++){
-              if ($request->get('addCourseBtn') == $courseTimeDaySection[$i]->id){
-                //User already have the course.
-                return view('manageCourses',
-                           ['courseTitleTeacher' => $courseTitleTeacher,
-                            'courseTimeDaySection' => $courseTimeDaySection,
-                            'errorMessage' => 'Cannot add two of the same courses!']);
+
+                if ($request->get('addCourseBtn') == $courseTimeDaySection[$i]->id){
+                  //User already have the course.
+                  return view('manageCourses',
+                             ['courseTitleTeacher' => $courseTitleTeacher,
+                              'courseTimeDaySection' => $courseTimeDaySection,
+                              'errorMessage' => 'Cannot add two of the same courses!']);
+                }
+
+                }
               }
-
-            }
-
-            }
 
 
             }
