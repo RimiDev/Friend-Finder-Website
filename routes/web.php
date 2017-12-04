@@ -33,4 +33,4 @@ Route::post('/manageCourses', 'CourseController@courses');
 
 Route::get('/findFriendBreaks', 'FriendBreaksController@index');
 
-Route::post('/findFriendBreaks', 'FriendBreaksController@friends');
+Route::post('/findFriendBreaks', 'FriendBreaksController@findBreakFriends');
