@@ -204,6 +204,8 @@ class CourseController extends Controller
 
               $this->debug($request->get('startTime'));
               //Check if user doesn't already have this course.
+              if (isset($courseTimeDaySection)){
+
               for($i = 0; $i < count($courseTimeDaySection); $i++){
               if ($request->get('addCourseBtn') == $courseTimeDaySection[$i]->id){
                 //User already have the course.
@@ -212,6 +214,8 @@ class CourseController extends Controller
                             'courseTimeDaySection' => $courseTimeDaySection,
                             'errorMessage' => 'Cannot add two of the same courses!']);
               }
+
+            }
 
 
             }
