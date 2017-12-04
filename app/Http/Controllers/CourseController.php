@@ -238,8 +238,6 @@ class CourseController extends Controller
                           'courseTimeDaySection' => $courseTimeDaySection,
                           'errorMessage' => 'Course has been added!']);
 
-            }
-
     }// end of Course()
 
     function debug($msg) {
