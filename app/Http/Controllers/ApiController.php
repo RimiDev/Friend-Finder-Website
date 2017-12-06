@@ -86,27 +86,18 @@ class ApiController extends Controller
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
     /**
      * @param Request $request
-     * @param $coursename
-     * @param $section
      * @return \Illuminate\Http\JsonResponse
      */
-    public function findallfriendsbyclass(Request $request, $coursename, $section) {
+    public function friendbreaks(Request $request) {
         //check credentials
         $credentials = $request->only('email', 'password');
         $valid = Auth::once($credentials);
+
+        $day = $request->get('day');
+        $start = $request->get('starttime');
+        $end = $request->get('endtime');
 
         if (!$valid) {
             return response()->json(['error' => 'invalid_credentials'], 401);
@@ -117,15 +108,16 @@ class ApiController extends Controller
 
     /**
      * @param Request $request
-     * @param $day
-     * @param $starttime
-     * @param $endtime
      * @return \Illuminate\Http\JsonResponse
      */
-    public function findfriendbreaks(Request $request, $day, $starttime, $endtime) {
+    public function whereisfriend(Request $request) {
         //check credentials
         $credentials = $request->only('email', 'password');
         $valid = Auth::once($credentials);
+
+        $friendemail = $request->get('email');
+        $day = $request->get('day');
+        $time = $request->get('time');
 
         if (!$valid) {
             return response()->json(['error' => 'invalid_credentials'], 401);
@@ -134,22 +126,4 @@ class ApiController extends Controller
         }
     }
 
-    /**
-     * @param Request $request
-     * @param $friendemail
-     * @param $day
-     * @param $time
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function findfriendlocation(Request $request, $friendemail, $day, $time) {
-        //check credentials
-        $credentials = $request->only('email', 'password');
-        $valid = Auth::once($credentials);
-
-        if (!$valid) {
-            return response()->json(['error' => 'invalid_credentials'], 401);
-        } else {
-
-        }
-    }
 }
