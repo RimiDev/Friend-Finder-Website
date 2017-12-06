@@ -25,20 +25,47 @@
                 <li><a href="/findFriendBreaks">Find Friend Breaks</a></li>
             </ul>
         </div>
+        <br/><br/><br/>
 
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
                 <div id="block">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <p> blah </p>
+                            <h3 id="boldText"> Friends </h3>
                         </div>
-                        <div class="panel-body1">
-
-                            @if (session('status'))
-                                <div class="alert alert-success">
-                                    {{ session('status') }}
-                                </div>
+                        <div class="panel-body">
+                            @if(isset($friendNames) && count($friendNames) > 0 && isset($friendStatus) && count($friendStatus) > 0)
+                                @for($i = 0; $i < count($friendStatus); $i++)
+                                    <h4 id="boldText">
+                                        {{ $friendNames[$i]->name.' '.$friendNames[$i]->program.' '.$friendStatus[$i]->status }}
+                                        @if($friendStatus[$i]->status === 'Request Received')
+                                            <form method="post" action="">
+                                                {{ csrf_field() }}
+                                                <button id="addButton" type="submit" name="declineRequest"
+                                                        value="{{$friendNames[$i]->email}}">
+                                                    Decline
+                                                </button>
+                                                <button id="addButton" type="submit" name="acceptRequest"
+                                                        value="{{$friendNames[$i]->email}}">
+                                                    Accept
+                                                </button>
+                                            </form>
+                                        @elseif($friendStatus[$i]->status === 'Confirmed')
+                                            <form method="post" action="">
+                                                {{ csrf_field() }}
+                                                <button id="addButton" type="submit" name="declineRequest"
+                                                        value="{{$friendNames[$i]->email}}">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                    </h4>
+                                        @endif
+                                @endfor
+                            @else
+                                <h4 id="boldText">
+                                    No friends
+                                </h4>
                             @endif
                         </div>
                     </div>
@@ -47,14 +74,42 @@
                 <div id="block">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <p> blah </p>
+                            <h3 id="boldText"> Courses </h3>
                         </div>
-                        <div class="panel-body2">
-                            @if (session('status'))
-                                <div class="alert alert-success">
-                                    {{ session('status') }}
-                                </div>
-                            @endif
+                        <div class="panel-body">
+                            <form action="" method="post">
+                                {{ csrf_field() }}
+                                @if(isset($courseTitleTeacher))
+                                    @for ($i = 0; $i < count($courseTitleTeacher); $i++)
+                                        <h4 id="boldText">{!! $courseTitleTeacher[$i]->title . "<br/>"
+                       . $courseTitleTeacher[$i]->teacher !!}</h4>
+                                        <?php
+                                        switch ($courseTimeDaySection[$i]->day) {
+                                            case 1:
+                                                echo 'Monday';
+                                                break;
+                                            case 2:
+                                                echo 'Tuesday';
+                                                break;
+                                            case 3:
+                                                echo 'Wednesday';
+                                                break;
+                                            case 4:
+                                                echo 'Thursday';
+                                                break;
+                                            case 5:
+                                                echo 'Friday';
+                                                break;
+                                        }
+                                        ?>
+                                        {{ $courseTimeDaySection[$i]->startTime . '-'
+                                         . $courseTimeDaySection[$i]->endTime . ' | Section: '
+                                         . $courseTimeDaySection[$i]->sectionID }}
+                                    @endfor
+                                @else
+                                    <h4 id="boldText"> No courses registered </h4>
+                                @endif
+                            </form>
                         </div>
                     </div>
                 </div>

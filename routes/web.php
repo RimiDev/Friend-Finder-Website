@@ -23,6 +23,8 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
+Route::post('/', 'HomeController@searchSaveUpdateFriends');
+
 Route::post('/manageFriends', 'FriendController@searchSaveUpdateFriends');
 
 Route::get('/manageCourses', 'CourseController@index');
