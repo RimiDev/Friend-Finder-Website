@@ -95,15 +95,74 @@ class ApiController extends Controller
         $credentials = $request->only('email', 'password');
         $valid = Auth::once($credentials);
 
+        // Gets each friend once
+        $friendStatus = Friend::where('email','=', Auth::user()->email)->get();
+        foreach ($friendStatus as $friend)
+            $friendObjs[] = User::where('email', '=', $friend->friendEmail)->orderby('email')->first();
+
         $day = $request->get('day');
         $start = $request->get('starttime');
         $end = $request->get('endtime');
 
+        // Arrays
+        $name = array();
+        $email = array();
+
         if (!$valid) {
             return response()->json(['error' => 'invalid_credentials'], 401);
         } else {
+            $breaksFriend = 0;
+            $j = 0;
 
-        }
+            for ($i = 0; $i < count($friendObjs); $i++)
+            {
+                $friendCourse = Course::where('day', '=', $this->getDay($day))->
+                whereIn('id', function ($q) use ($friendObjs, $i)
+                {
+                    $q->select('course_id')->from('user_course')->
+                    where('email', '=', $friendObjs[$i]->email)->orderby('email');
+                }
+                )->orderby('startTime')->get();
+
+                for ($course = 0; $course < count($friendCourse) - 1; $course++)
+                {
+                    $j++;
+                    if($friendCourse[$course]->endTime <= $start && $friendCourse[$j]->startTime >= $end)
+                    {
+                        $email[] = $friendObjs[$i]->email;
+                        $name[] = $friendObjs[$i]->name;
+                        $breaksFriend++;
+                    }
+                    else if($friendCourse[$course]->endTime > $start && $friendCourse[$course]->endTime < $end)
+                    {
+                        $email[] = $friendObjs[$i]->email;
+                        $name[] = $friendObjs[$i]->name;
+                        $breaksFriend++;
+                    }
+                    else if($friendCourse[$j]->startTime < $end && $friendCourse[$j]->startTime > $start)
+                    {
+                        $email[] = $friendObjs[$i]->email;
+                        $name[] = $friendObjs[$i]->name;
+                        $breaksFriend++;
+                    }
+                } // End inner for loop
+                $j = 0;
+
+            } // End for loop
+            $data = array();
+            if (isset($friendObjs) && count($friendObjs) > 0) {
+                for ($k = 0; $k < count($name); $k++) {
+                    $data += ['email' => $email[$k], 'name' => $name[$k]];
+                }
+            }
+
+            if (count($data) == 0) {
+                return response()->json(['email' => 'No friend found', 'name' => 'No friend found']);
+            }
+
+            return response()->json($data, 401);
+
+        } // End else
     }
 
     /**
@@ -124,6 +183,38 @@ class ApiController extends Controller
         } else {
 
         }
+    }
+
+    /**
+     * Gets the day from the user and puts it as an integer
+     */
+    private function getDay($day)
+    {
+        $value = 0;
+        if (ctype_alpha($day)) {
+            $day = trim(strtolower($day));
+            switch ($day) {
+                case "monday":
+                    $value = 1;
+                    break;
+                case "tuesday":
+                    $value = 2;
+                    break;
+                case "wednesday":
+                    $value = 3;
+                    break;
+                case "thursday":
+                    $value = 4;
+                    break;
+                case "friday":
+                    $value = 5;
+                    break;
+                default:
+                    $value = 0;
+                    break;
+            }
+        }
+        return $value;
     }
 
 }
