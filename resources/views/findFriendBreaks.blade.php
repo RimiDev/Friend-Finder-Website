@@ -35,15 +35,9 @@
                     </div>
                     <div class="panel-body">
 
-                        @if(isset($breaksFriend) && count($breaksFriend) > 0 && isset($friendNames) && count($friendNames))
+                        @if(isset($friendNames) && count($friendNames) > 0)
                             @foreach($friendNames as $name)
-                                <h3>
-                                    {{ $name->name }}
-                                    @for($i = 0; $i < count($breaksFriend); $i++)
-                                        {{  ": ". $breaksFriend[$i]. " - ". $breaksFriend[++$i] }}
-                                </h3>
-
-                                @endfor
+                                <h3>{{ $name->name }}</h3>
                                 <br/>
                             @endforeach
                         @endif
@@ -65,7 +59,7 @@
                         {{ csrf_field() }}
                         <h3 id="boldText">Search for friends with breaks:</h3>
                         <h3 id="boldText">Day:</h3>
-                        <input id="dayBreakSearch" type="text" name="dayName">
+                            <input id="dayBreakSearch" type="text" name="dayName">
                         <h3 id="boldText">Start Time:</h3>
                         <input id="startTimeSearch" type="text" name="startName">
                         <h3 id="boldText">End Time:</h3>
@@ -74,13 +68,7 @@
                     </form>
                 </div>
 
-                <div class="panel-body">
-                    @if (session('status'))
-                        <div class="alert alert-success">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-                </div>
+
             </div>
         </div>
     </div>

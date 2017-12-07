@@ -51,32 +51,25 @@ class FriendBreaksController extends Controller
         }
 
         //Get friend breaks
+        $breaksFriend = 0;
+        $j = 0;
         if (count($friendCourse) > 1)
         {
             for ($i = 0; $i < count($friendCourse) - 1; $i++)
             {
-                if(count($friendCourse) == 3)
-                    $i++;
-                if(count($friendCourse) == 4)
-                    $i = $i + 2;
-                if($friendCourse[$i]->endTime < $startBreak && $friendCourse[++$i]->startTime > $endBreak)
-                {
-                    $i = $i - 1;
-                    $endFirstFriend = $friendCourse[$i]->endTime;
-                    if (++$i < count($friendCourse))
-                    {
-                        $startSecondFriend = $friendCourse[$i]->startTime;
-                        $i = $i - 1;
-                    }
-                    $breaksFriend[] = $endFirstFriend;
-                    $breaksFriend[] = $startSecondFriend;
-                }
+                $j++;
+                if($friendCourse[$i]->endTime <= $startBreak && $friendCourse[$j]->startTime >= $endBreak)
+                    $breaksFriend++;
+                if($friendCourse[$i]->endTime > $startBreak && $friendCourse[$i]->endTime < $endBreak)
+                    $breaksFriend++;
+                if($friendCourse[$j]->startTime < $endBreak && $friendCourse[$j]->startTime > $startBreak)
+                    $breaksFriend++;
             }
         }
 
         // Check if friends have break
-        if(isset($breaksFriend) && count($breaksFriend) > 0)
-            return view('findFriendBreaks', ["friendNames" => $friendObjs, "breaksFriend" => $breaksFriend]);
+        if($breaksFriend > 0)
+            return view('findFriendBreaks', ["friendNames" => $friendObjs]);
         return view('findFriendBreaks');
     }
 
