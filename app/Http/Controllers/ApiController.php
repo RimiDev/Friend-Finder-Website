@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Course;
 use App\Friend;
 use App\User;
+use App\Course_teacher;
 use Auth;
 
 class ApiController extends Controller
@@ -64,30 +65,48 @@ class ApiController extends Controller
         $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->get();
 
         // Getting the user object of the friend
-        foreach ($friendStatus as $friend)
+        foreach ($friendStatus as $friend) {
             $friendNames[] = User::where('email', '=', $friend->friendEmail)->first();
 
-        // Array of email
-        $friendEmails = array();
-        foreach ($friendNames as $f) {
-            $friendEmails[] = $f->email;
-        }
+          }
 
-        // Array of courses
-        $friendCourses = array();
-        for ($i = 0; $i < count($friendEmails); $i++) {
-            $friendCourses = User_course::where('email', '=', $friendEmails[$i])->first();
-        }
+          for($z = 0; $z < count($friendNames); $z++)
+          {
+            $friendCourse = Course::whereIn('id', function ($q) use ($friendNames, $z)
+            {
+                $q->select('course_id')->from('user_course')->
+                where('email', '=', $friendNames[$z]->email);
+            })->where('sectionID', '=', $section)->get();
+
+            foreach($friendCourse as $course)
+            {
+                  $courseTitle = Course_teacher::where('courseID', '=', $course->courseID)->
+                  where('title', '=', $coursename)->get();
+
+            }
+
+              if(isset($friendCourse))
+              {
+                    $friendsThatMatchName[] = $friendNames[$z]->name;
+                    $friendsThatMatchEmail[] = $friendNames[$z]->email;
+              }
+
+
+          }
 
         if (!$valid) {
             return response()->json(['error' => 'invalid_credentials'], 401);
         } else {
-            $data = array();
-            if (isset($friendCourses) && count($friendCourses) > 0) {
-                foreach ($friendCourses as $c) {
-                    $data += ['courseid' => $c];
-                }
-            }
+
+            if (isset($friendsThatMatchName) && count($friendsThatMatchName) > 0)
+             {
+                  for($x = 0; $x < count($friendsThatMatchName); $x++)
+                  {
+                  //$data[] = ['email' => $matched->email, 'name' => $matched->name];
+                  $data[] = ['name ' => $friendsThatMatchName[$x], 'email: ' => $friendsThatMatchName[$x]];
+                  }
+              }
+
 
             return response()->json($data, 401);
         }
@@ -258,5 +277,12 @@ class ApiController extends Controller
         }
         return $value;
     }
+
+
+
+    function debug($msg) {
+       $msg = str_replace('"', '\\"', $msg); // Escaping double quotes
+        echo "<script>console.log(\"$msg\")</script>";
+}
 
 }
