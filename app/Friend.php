@@ -15,7 +15,7 @@ class Friend extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'email', 'status', 'friendEmail'
+        'user_id', 'email', 'status', 'friendEmail',
     ];
 
     public $timestamps = false;
