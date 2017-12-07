@@ -60,6 +60,9 @@ class ApiController extends Controller
 
         $coursename = $request->get('coursename');
         $section = $request->get('section');
+        $friendsThatMatchName[] = $coursename;
+
+
 
         // Getting the friend object
         $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->get();
@@ -78,15 +81,21 @@ class ApiController extends Controller
                 where('email', '=', $friendNames[$z]->email);
             })->where('sectionID', '=', $section)->get();
 
+                    //$friendsThatMatchEmail[] = $friendCourse[0]->sectionID;
+
             foreach($friendCourse as $course)
             {
                   $courseTitle = Course_teacher::where('courseID', '=', $course->courseID)->
-                  where('title', '=', $coursename)->get();
+                  where('title', '=', 'Human Body for Nurses II')->get();
 
             }
 
-              if(isset($friendCourse))
+                    $friendsThatMatchEmail[] = $courseTitle[0]->title;
+
+              if(isset($courseTitle) && count($courseTitle)>0)
               {
+                    //$friendsThatMatchName[] = $friendCourse[0]->sectionID;
+                    //$friendsThatMatchEmail[] = $courseTitle[0]->title;
                     $friendsThatMatchName[] = $friendNames[$z]->name;
                     $friendsThatMatchEmail[] = $friendNames[$z]->email;
               }
@@ -103,7 +112,7 @@ class ApiController extends Controller
                   for($x = 0; $x < count($friendsThatMatchName); $x++)
                   {
                   //$data[] = ['email' => $matched->email, 'name' => $matched->name];
-                  $data[] = ['name ' => $friendsThatMatchName[$x], 'email: ' => $friendsThatMatchName[$x]];
+                  $data[] = ['name ' => $friendsThatMatchName[$x], 'email: ' => $friendsThatMatchEmail[$x]];
                   }
               }
 
