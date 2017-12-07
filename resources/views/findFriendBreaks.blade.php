@@ -35,15 +35,9 @@
                     </div>
                     <div class="panel-body">
 
-                        @if(isset($breaksFriend) && count($breaksFriend) > 0 && isset($friendNames) && count($friendNames))
+                        @if(isset($friendNames) && count($friendNames) > 0)
                             @foreach($friendNames as $name)
-                                <h3>
-                                    {{ $name->name }}
-                                    @for($i = 0; $i < count($breaksFriend); $i++)
-                                        {{  ": ". $breaksFriend[$i]. " - ". $breaksFriend[++$i] }}
-                                </h3>
-
-                                @endfor
+                                <h3>{{ $name }}</h3>
                                 <br/>
                             @endforeach
                         @endif
@@ -65,22 +59,41 @@
                         {{ csrf_field() }}
                         <h3 id="boldText">Search for friends with breaks:</h3>
                         <h3 id="boldText">Day:</h3>
-                        <input id="dayBreakSearch" type="text" name="dayName">
+                        <Select name="dayName">
+                            <option value="monday">Monday</option>
+                            <option value="tuesday">Tuesday</option>
+                            <option value="wednesday">Wednesday</option>
+                            <option value="thursday">Thursday</option>
+                            <option value="friday">Friday</option>
+                        </Select>
+
                         <h3 id="boldText">Start Time:</h3>
-                        <input id="startTimeSearch" type="text" name="startName">
+                        <Select name="startName">
+                            @for($i = 1000; $i < 1700;)
+                                <option value={{$i}}>{{ $i }}</option>
+                                {{$i += 30}}
+                                <option value={{$i}}>{{ $i }}</option>
+                                {{$i += 70}}
+                            @endfor
+                            <option value={{$i}}>{{ $i }}</option>
+                        </Select>
+
                         <h3 id="boldText">End Time:</h3>
-                        <input id="endTimeSearch" type="text" name="endName"><br/><br/>
+                        <Select name="endName">
+                            @for($i = 1000; $i < 1700;)
+                                <option value={{$i}}>{{ $i }}</option>
+                                {{$i += 30}}
+                                <option value={{$i}}>{{ $i }}</option>
+                                {{$i += 70}}
+                            @endfor
+                            <option value={{$i}}>{{ $i }}</option>
+                        </Select>
+                        <br/><br/>
                         <input type="submit" name="submitSearchBreaks" value="Search">
                     </form>
                 </div>
 
-                <div class="panel-body">
-                    @if (session('status'))
-                        <div class="alert alert-success">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-                </div>
+
             </div>
         </div>
     </div>
