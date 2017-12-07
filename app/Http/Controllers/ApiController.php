@@ -34,7 +34,7 @@ class ApiController extends Controller
             $data = array();
             if (isset($friendNames) && count($friendNames) > 0) {
                 foreach ($friendNames as $friends) {
-                    $data += ['email' => $friends->email, 'name' => $friends->name];
+                    $data[] = ['email' => $friends->email, 'name' => $friends->name];
                 }
             }
 
@@ -67,17 +67,7 @@ class ApiController extends Controller
         foreach ($friendStatus as $friend)
             $friendNames[] = User::where('email', '=', $friend->friendEmail)->first();
 
-        // Array of email
-        $friendEmails = array();
-        foreach ($friendNames as $f) {
-            $friendEmails[] = $f->email;
-        }
 
-        // Array of courses
-        $friendCourses = array();
-        for ($i = 0; $i < count($friendEmails); $i++) {
-            $friendCourses = User_course::where('email', '=', $friendEmails[$i])->first();
-        }
 
         if (!$valid) {
             return response()->json(['error' => 'invalid_credentials'], 401);
@@ -113,10 +103,6 @@ class ApiController extends Controller
         $start = $request->get('starttime');
         $end = $request->get('endtime');
 
-        // Arrays
-        $name = array();
-        $email = array();
-
         if (!$valid) {
             return response()->json(['error' => 'invalid_credentials'], 401);
         } else {
@@ -150,10 +136,9 @@ class ApiController extends Controller
                 $j = 0;
 
             } // End for loop
-            $data = array();
             if (isset($friendObjs) && count($friendObjs) > 0) {
                 for ($k = 0; $k < count($name); $k++) {
-                    $data += ['email' => $email[$k], 'name' => $name[$k]];
+                    $data[] = ['email' => $email[$k], 'name' => $name[$k]];
                 }
             }
 
