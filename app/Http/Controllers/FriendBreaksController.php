@@ -76,8 +76,8 @@ class FriendBreaksController extends Controller
 
         // Check if friends have break
         if($breaksFriend > 0)
-            return view('findFriendBreaks', ["friendNames" => $name, "courses" => $friendCourse, "start" => $startBreak, "end" => $endBreak]);
-        return view('findFriendBreaks', ["courses" => $friendCourse, "start" => $startBreak, "end" => $endBreak]);
+            return view('findFriendBreaks', ["friendNames" => $name]);
+        return view('findFriendBreaks');
     }
 
     /**
