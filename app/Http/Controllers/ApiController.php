@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Classes;
 use App\User_course;
 use Illuminate\Http\Request;
 use App\Course;
@@ -16,7 +17,8 @@ class ApiController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function allfriends(Request $request) {
+    public function allfriends(Request $request)
+    {
         //check credentials
         $credentials = $request->only('email', 'password');
         $valid = Auth::once($credentials);
@@ -44,7 +46,13 @@ class ApiController extends Controller
         }
     }
 
-    public function coursefriends(Request $request) {
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function coursefriends(Request $request)
+    {
+        // TODO : FINISH THIS
         // check credentials
         $credentials = $request->only('email', 'password');
         $valid = Auth::once($credentials);
@@ -60,14 +68,14 @@ class ApiController extends Controller
             $friendNames[] = User::where('email', '=', $friend->friendEmail)->first();
 
         // Array of email
-        $friendEmails= array();
-        foreach($friendNames as $f) {
+        $friendEmails = array();
+        foreach ($friendNames as $f) {
             $friendEmails[] = $f->email;
         }
 
         // Array of courses
         $friendCourses = array();
-        for ($i = 0;$i < count($friendEmails); $i++) {
+        for ($i = 0; $i < count($friendEmails); $i++) {
             $friendCourses = User_course::where('email', '=', $friendEmails[$i])->first();
         }
 
@@ -90,13 +98,14 @@ class ApiController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function friendbreaks(Request $request) {
+    public function friendbreaks(Request $request)
+    {
         //check credentials
         $credentials = $request->only('email', 'password');
         $valid = Auth::once($credentials);
 
         // Gets each friend once
-        $friendStatus = Friend::where('email','=', Auth::user()->email)->get();
+        $friendStatus = Friend::where('email', '=', Auth::user()->email)->get();
         foreach ($friendStatus as $friend)
             $friendObjs[] = User::where('email', '=', $friend->friendEmail)->orderby('email')->first();
 
@@ -114,33 +123,25 @@ class ApiController extends Controller
             $breaksFriend = 0;
             $j = 0;
 
-            for ($i = 0; $i < count($friendObjs); $i++)
-            {
+            for ($i = 0; $i < count($friendObjs); $i++) {
                 $friendCourse = Course::where('day', '=', $this->getDay($day))->
-                whereIn('id', function ($q) use ($friendObjs, $i)
-                {
+                whereIn('id', function ($q) use ($friendObjs, $i) {
                     $q->select('course_id')->from('user_course')->
                     where('email', '=', $friendObjs[$i]->email)->orderby('email');
                 }
                 )->orderby('startTime')->get();
 
-                for ($course = 0; $course < count($friendCourse) - 1; $course++)
-                {
+                for ($course = 0; $course < count($friendCourse) - 1; $course++) {
                     $j++;
-                    if($friendCourse[$course]->endTime <= $start && $friendCourse[$j]->startTime >= $end)
-                    {
+                    if ($friendCourse[$course]->endTime <= $start && $friendCourse[$j]->startTime >= $end) {
                         $email[] = $friendObjs[$i]->email;
                         $name[] = $friendObjs[$i]->name;
                         $breaksFriend++;
-                    }
-                    else if($friendCourse[$course]->endTime > $start && $friendCourse[$course]->endTime < $end)
-                    {
+                    } else if ($friendCourse[$course]->endTime > $start && $friendCourse[$course]->endTime < $end) {
                         $email[] = $friendObjs[$i]->email;
                         $name[] = $friendObjs[$i]->name;
                         $breaksFriend++;
-                    }
-                    else if($friendCourse[$j]->startTime < $end && $friendCourse[$j]->startTime > $start)
-                    {
+                    } else if ($friendCourse[$j]->startTime < $end && $friendCourse[$j]->startTime > $start) {
                         $email[] = $friendObjs[$i]->email;
                         $name[] = $friendObjs[$i]->name;
                         $breaksFriend++;
@@ -169,21 +170,62 @@ class ApiController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function whereisfriend(Request $request) {
+    public function whereisfriend(Request $request)
+    {
         //check credentials
         $credentials = $request->only('email', 'password');
         $valid = Auth::once($credentials);
 
-        $friendemail = $request->get('email');
+        $friendemail = $request->get('friendemail');
         $day = $request->get('day');
         $time = $request->get('time');
 
         if (!$valid) {
             return response()->json(['error' => 'invalid_credentials'], 401);
         } else {
+            // Get friend courses
+            $friendCourse = Course::where('day', '=', $this->getDay($day))->
+            whereIn('id', function ($q) use ($friendemail) {
+                $q->select('course_id')->from('user_course')->
+                where('email', '=', $friendemail);}
+            )->orderby('startTime')->get();
 
+            // Get the class number
+            foreach ($friendCourse as $c)
+            {
+                $class[] = Classes::where('classID', '=', $c->classID)->first();
+            }
+
+            foreach ($class as $classname)
+            {
+                $arrayclasses[] = $classname->classNumber;
+            }
+
+            if (isset($friendCourse) && count($friendCourse) > 0) {
+                for ($i = 0; $i < count($friendCourse); $i++) {
+                    if ($friendCourse[$i]->startTime < $time && $friendCourse[$i]->endTime > $time) {
+                        $course[] = $arrayclasses[$i];
+                        $section[] = $friendCourse[$i]->sectionID;
+                        $starttime[] = $friendCourse[$i]->startTime;
+                    }
+                }
+            }
+        } // End if
+
+        $data = array();
+        if (isset($course) && count($course) > 0) {
+            for ($k = 0; $k < count($course); $k++) {
+                $data[] = ['course' => $course[$k], 'section' => $section[$k]];
+            }
         }
+
+        if (count($data) == 0) {
+            return response()->json(['course' => '', 'section' => '']);
+        }
+
+        return response()->json($data, 401);
     }
+
 
     /**
      * Gets the day from the user and puts it as an integer
