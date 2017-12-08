@@ -55,7 +55,7 @@ class CourseController extends Controller
         }
 
       } else {
-        return null;
+        return $courseTimeDaySection[0] = null;
       }
 
       //return $courseTitleTeacher,$courseTimeDaySection;
