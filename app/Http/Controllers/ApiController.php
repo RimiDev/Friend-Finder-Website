@@ -82,6 +82,11 @@ class ApiController extends Controller
               })->get();
 
 
+              if (count($friendCourse) == 0) {
+                  return response()->json(['name' => 'No course found','email' => 'No course found']);
+              }
+
+
                 foreach ($friendCourse as $course)
                 {
                     $courseTitle = Course_teacher::where('courseID', '=', $course->courseID)->
@@ -102,6 +107,7 @@ class ApiController extends Controller
                   for($x = 0; $x < count($friendsThatMatchName); $x++)
                       $data[] = ['name' => $friendsThatMatchName[$x], 'email' => $friendsThatMatchEmail[$x]];
               }
+
 
             return response()->json($data, 401);
         }
