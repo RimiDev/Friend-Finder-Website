@@ -27,7 +27,8 @@ class ApiController extends Controller
         if (!$valid) {
             return response()->json(['error' => 'invalid_credentials'], 401);
         } else {
-            $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->get();
+            $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->
+            where('status','=','Confirmed')->get();
 
             foreach ($friendStatus as $friend)
                 $friendNames[] = User::where('email', '=', $friend->friendEmail)->first();
@@ -64,7 +65,8 @@ class ApiController extends Controller
         $section = $request->get('section');
 
         // Getting the friend object
-        $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->get();
+        $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->
+        where('status','=','Confirmed')->get();
         // Getting the user object of the friend
         foreach ($friendStatus as $friend) {
             $friendNames[] = User::where('email', '=', $friend->friendEmail)->first();
@@ -117,7 +119,8 @@ class ApiController extends Controller
         $valid = Auth::once($credentials);
 
         // Gets each friend once
-        $friendStatus = Friend::where('email', '=', Auth::user()->email)->get();
+        $friendStatus = Friend::where('email', '=', Auth::user()->email)->
+        where('status','=','Confirmed')->get();
         foreach ($friendStatus as $friend)
             $friendObjs[] = User::where('email', '=', $friend->friendEmail)->orderby('email')->first();
 
