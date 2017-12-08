@@ -58,68 +58,53 @@ class ApiController extends Controller
         $credentials = $request->only('email', 'password');
         $valid = Auth::once($credentials);
 
+        if (!$valid)
+            return response()->json(['error' => 'invalid_credentials'], 401);
+
         $coursename = $request->get('coursename');
         $section = $request->get('section');
-        $friendsThatMatchName[] = $coursename;
-
-
 
         // Getting the friend object
         $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->get();
-
         // Getting the user object of the friend
         foreach ($friendStatus as $friend) {
             $friendNames[] = User::where('email', '=', $friend->friendEmail)->first();
-
           }
 
-          for($z = 0; $z < count($friendNames); $z++)
+          foreach($friendNames as $theFriend)
           {
-            $friendCourse = Course::whereIn('id', function ($q) use ($friendNames, $z)
-            {
-                $q->select('course_id')->from('user_course')->
-                where('email', '=', $friendNames[$z]->email);
-            })->where('sectionID', '=', $section)->get();
-
-                    //$friendsThatMatchEmail[] = $friendCourse[0]->sectionID;
-
-            foreach($friendCourse as $course)
-            {
-                  $courseTitle = Course_teacher::where('courseID', '=', $course->courseID)->
-                  where('title', '=', 'Human Body for Nurses II')->get();
-
-            }
-
-                    $friendsThatMatchEmail[] = $courseTitle[0]->title;
-
-              if(isset($courseTitle) && count($courseTitle)>0)
+              $friendCourse = Course::where('sectionID', '=', $section)->
+              whereIn('id', function ($q) use ($theFriend)
               {
-                    //$friendsThatMatchName[] = $friendCourse[0]->sectionID;
-                    //$friendsThatMatchEmail[] = $courseTitle[0]->title;
-                    $friendsThatMatchName[] = $friendNames[$z]->name;
-                    $friendsThatMatchEmail[] = $friendNames[$z]->email;
-              }
+                  $q->select('course_id')->from('user_course')->
+                  where('email', '=', $theFriend->email);
+              })->get();
 
 
+                foreach ($friendCourse as $course)
+                {
+                    $courseTitle = Course_teacher::where('courseID', '=', $course->courseID)->
+                    where('title', '=', $coursename)->get();
+                }
+
+
+            if(isset($courseTitle) && count($courseTitle) > 0)
+            {
+                $friendsThatMatchName[] = $theFriend->name;
+                $friendsThatMatchEmail[] = $theFriend->email;
+            }
+              $courseTitle = null;
           }
 
-        if (!$valid) {
-            return response()->json(['error' => 'invalid_credentials'], 401);
-        } else {
-
-            if (isset($friendsThatMatchName) && count($friendsThatMatchName) > 0)
+            if (isset($friendsThatMatchName) && count($friendsThatMatchName) > 0 && isset($friendsThatMatchEmail) && count($friendsThatMatchEmail) > 0)
              {
                   for($x = 0; $x < count($friendsThatMatchName); $x++)
-                  {
-                  //$data[] = ['email' => $matched->email, 'name' => $matched->name];
-                  $data[] = ['name ' => $friendsThatMatchName[$x], 'email: ' => $friendsThatMatchEmail[$x]];
-                  }
+                      $data[] = ['name' => $friendsThatMatchName[$x], 'email' => $friendsThatMatchEmail[$x]];
               }
-
 
             return response()->json($data, 401);
         }
-    }
+
 
 
     /**
