@@ -201,6 +201,7 @@ class CourseController extends Controller
               // self::debug($courseTimeDaySection[1]->id);
               // self::debug($request->get('addCourseBtn'));
 
+              if (isset($courseTimeDaySection)){
               //Check if user doesn't already have this course.
               for($i = 0; $i < count($courseTimeDaySection); $i++){
               if ($request->get('addCourseBtn') == $courseTimeDaySection[$i]->id){
@@ -212,6 +213,8 @@ class CourseController extends Controller
                 //$userHasCourse = false;
               }
             }
+
+          }
             //User doesn't have the course, add it!
 
               //Add user to database
