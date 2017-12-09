@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Course;
 use App\Friend;
 use App\User;
+use App\Course_teacher;
 use Auth;
 
 class ApiController extends Controller
@@ -26,12 +27,12 @@ class ApiController extends Controller
         if (!$valid) {
             return response()->json(['error' => 'invalid_credentials'], 401);
         } else {
-            $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->get();
+            $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->
+            where('status','=','Confirmed')->get();
 
             foreach ($friendStatus as $friend)
                 $friendNames[] = User::where('email', '=', $friend->friendEmail)->first();
 
-            $data = array();
             if (isset($friendNames) && count($friendNames) > 0) {
                 foreach ($friendNames as $friends) {
                     $data[] = ['email' => $friends->email, 'name' => $friends->name];
@@ -52,36 +53,65 @@ class ApiController extends Controller
      */
     public function coursefriends(Request $request)
     {
-        // TODO : FINISH THIS
+
         // check credentials
         $credentials = $request->only('email', 'password');
         $valid = Auth::once($credentials);
+
+        if (!$valid)
+            return response()->json(['error' => 'invalid_credentials'], 401);
 
         $coursename = $request->get('coursename');
         $section = $request->get('section');
 
         // Getting the friend object
-        $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->get();
-
+        $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->
+        where('status','=','Confirmed')->get();
         // Getting the user object of the friend
-        foreach ($friendStatus as $friend)
+        foreach ($friendStatus as $friend) {
             $friendNames[] = User::where('email', '=', $friend->friendEmail)->first();
+          }
+
+          foreach($friendNames as $theFriend)
+          {
+              $friendCourse = Course::where('sectionID', '=', $section)->
+              whereIn('id', function ($q) use ($theFriend)
+              {
+                  $q->select('course_id')->from('user_course')->
+                  where('email', '=', $theFriend->email);
+              })->get();
 
 
+              if (count($friendCourse) == 0) {
+                  return response()->json(['name' => 'No course found','email' => 'No course found']);
+              }
 
-        if (!$valid) {
-            return response()->json(['error' => 'invalid_credentials'], 401);
-        } else {
-            $data = array();
-            if (isset($friendCourses) && count($friendCourses) > 0) {
-                foreach ($friendCourses as $c) {
-                    $data += ['courseid' => $c];
+
+                foreach ($friendCourse as $course)
+                {
+                    $courseTitle = Course_teacher::where('courseID', '=', $course->courseID)->
+                    where('title', '=', $coursename)->get();
                 }
+
+
+            if(isset($courseTitle) && count($courseTitle) > 0)
+            {
+                $friendsThatMatchName[] = $theFriend->name;
+                $friendsThatMatchEmail[] = $theFriend->email;
             }
+              $courseTitle = null;
+          }
+
+            if (isset($friendsThatMatchName) && count($friendsThatMatchName) > 0 && isset($friendsThatMatchEmail) && count($friendsThatMatchEmail) > 0)
+             {
+                  for($x = 0; $x < count($friendsThatMatchName); $x++)
+                      $data[] = ['name' => $friendsThatMatchName[$x], 'email' => $friendsThatMatchEmail[$x]];
+              }
+
 
             return response()->json($data, 401);
         }
-    }
+
 
 
     /**
@@ -95,7 +125,8 @@ class ApiController extends Controller
         $valid = Auth::once($credentials);
 
         // Gets each friend once
-        $friendStatus = Friend::where('email', '=', Auth::user()->email)->get();
+        $friendStatus = Friend::where('email', '=', Auth::user()->email)->
+        where('status','=','Confirmed')->get();
         foreach ($friendStatus as $friend)
             $friendObjs[] = User::where('email', '=', $friend->friendEmail)->orderby('email')->first();
 
@@ -108,6 +139,8 @@ class ApiController extends Controller
         } else {
             $breaksFriend = 0;
             $j = 0;
+            $name = array();
+            $data = array();
 
             for ($i = 0; $i < count($friendObjs); $i++) {
                 $friendCourse = Course::where('day', '=', $this->getDay($day))->
@@ -136,6 +169,7 @@ class ApiController extends Controller
                 $j = 0;
 
             } // End for loop
+
             if (isset($friendObjs) && count($friendObjs) > 0) {
                 for ($k = 0; $k < count($name); $k++) {
                     $data[] = ['email' => $email[$k], 'name' => $name[$k]];
@@ -197,7 +231,6 @@ class ApiController extends Controller
             }
         } // End if
 
-        $data = array();
         if (isset($course) && count($course) > 0) {
             for ($k = 0; $k < count($course); $k++) {
                 $data[] = ['course' => $course[$k], 'section' => $section[$k]];
@@ -243,5 +276,12 @@ class ApiController extends Controller
         }
         return $value;
     }
+
+
+
+    function debug($msg) {
+       $msg = str_replace('"', '\\"', $msg); // Escaping double quotes
+        echo "<script>console.log(\"$msg\")</script>";
+}
 
 }

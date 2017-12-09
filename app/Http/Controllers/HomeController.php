@@ -30,86 +30,65 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-        $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->get();
+      $friendNames = null;
+      $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->get();
         foreach ($friendStatus as $friend)
-            $friendNames[] = User::where('email', '=', $friend->friendEmail)->first();
-
-        $courseTitleTeacher = self::getUserCourses('1');
-        $courseTimeDaySection = self::getUserCourses('2');
-
-        if(isset($friendNames) && count($friendNames) > 0 && isset($friendStatus) && count($friendStatus) > 0) {
-            if ($courseTitleTeacher == null || $courseTimeDaySection == null) { //have friends, dont have courses
-                return view('home', ['friendNames' => $friendNames, 'friendStatus' => $friendStatus]);
-            } else { //have friends & courses
+          $friendNames[] = User::where('email', '=', $friend->friendEmail)->first();
+            $courseTitleTeacher = $this->getUserCourses('1');
+              $courseTimeDaySection = $this->getUserCourses('2');
                 return view('home',
-                    ['friendNames' => $friendNames, 'friendStatus' => $friendStatus, 'courseTitleTeacher' => $courseTitleTeacher,
-                        'courseTimeDaySection' => $courseTimeDaySection,
-                        'errorMessage' => 'Find your courses here']);
-            }
-        }
-        else if($courseTitleTeacher != null || $courseTimeDaySection != null){ //no friends, courses?
-            return view('home',
-                ['courseTitleTeacher' => $courseTitleTeacher,
-                    'courseTimeDaySection' => $courseTimeDaySection,
-                    'errorMessage' => 'Find your courses here']);
-        }
-        else{ //no friends & no courses
-            return view('home');
-        }
+                  ['friendNames' => $friendNames, 'friendStatus' => $friendStatus, 'courseTitleTeacher' => $courseTitleTeacher,
+                    'courseTimeDaySection' => $courseTimeDaySection]);
 
     }
 
     public function searchSaveUpdateFriends(Request $request)
-    {
-        if ($request->get('submitFriendSearch'))
-        {
-            $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->get();
-            foreach ($friendStatus as $friend)
-                $friendNames[] = User::where('email', '=', $friend->friendEmail)->first();
+   {
+       $courseTitleTeacher = $this->getUserCourses('1');
+       $courseTimeDaySection = $this->getUserCourses('2');
 
-            if(isset($friendNames) && count($friendNames) > 0 && isset($friendStatus) && count($friendStatus) > 0)
-                return view('home', ['friendNames' => $friendNames,
-                    'friendStatus' => $friendStatus]);
-            return view('home');
-        }
+       if ($request->get('submitFriendSearch'))
+       {
+           $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->get();
+           foreach ($friendStatus as $friend)
+               $friendNames[] = User::where('email', '=', $friend->friendEmail)->first();
+           return view('home',
+                   ['friendNames' => $friendNames, 'friendStatus' => $friendStatus, 'courseTitleTeacher' => $courseTitleTeacher,
+                       'courseTimeDaySection' => $courseTimeDaySection]);
+       }
+       else if ($request->get('addFriendBtn'))
+       {
+           $this->saveFriend($request);
+           $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->get();
+           foreach ($friendStatus as $friend)
+               $friendNames[] = User::where('email', '=', $friend->friendEmail)->first();
+           return view('home',
+               ['friendNames' => $friendNames, 'friendStatus' => $friendStatus, 'courseTitleTeacher' => $courseTitleTeacher,
+                   'courseTimeDaySection' => $courseTimeDaySection]);
+       }
+       else if ($request->get('acceptRequest'))
+       {
+           $this->acceptFriendRequest($request);
+           $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->get();
+           foreach ($friendStatus as $friend)
+               $friendNames[] = User::where('email', '=', $friend->friendEmail)->first();
+           return view('home',
+               ['friendNames' => $friendNames, 'friendStatus' => $friendStatus, 'courseTitleTeacher' => $courseTitleTeacher,
+                   'courseTimeDaySection' => $courseTimeDaySection]);
+       }
+       else if ($request->get('declineRequest'))
+       {
+           $this->declineFriendRequest($request);
+           $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->get();
+           foreach ($friendStatus as $friend)
+               $friendNames[] = User::where('email', '=', $friend->friendEmail)->first();
+           return view('home',
+               ['friendNames' => $friendNames, 'friendStatus' => $friendStatus, 'courseTitleTeacher' => $courseTitleTeacher,
+                   'courseTimeDaySection' => $courseTimeDaySection]);
+       }
+   }
+   
 
-        else if ($request->get('addFriendBtn'))
-        {
-            $this->saveFriend($request);
-
-            $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->get();
-            foreach ($friendStatus as $friend)
-                $friendNames[] = User::where('email', '=', $friend->friendEmail)->first();
-
-            return view('home', ['friendNames' => $friendNames, 'friendStatus' => $friendStatus]);
-        }
-
-        else if ($request->get('acceptRequest'))
-        {
-            $this->acceptFriendRequest($request);
-
-            $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->get();
-            foreach ($friendStatus as $friend)
-                $friendNames[] = User::where('email', '=', $friend->friendEmail)->first();
-
-            if(isset($friendNames) && count($friendNames) > 0 && isset($friendStatus) && count($friendStatus) > 0)
-                return view('home', ['friendNames' => $friendNames, 'friendStatus' => $friendStatus]);
-            return view('home');
-        }
-        else if ($request->get('declineRequest'))
-        {
-            $this->declineFriendRequest($request);
-
-            $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->get();
-            foreach ($friendStatus as $friend)
-                $friendNames[] = User::where('email', '=', $friend->friendEmail)->first();
-
-            if(isset($friendNames) && count($friendNames) > 0 && isset($friendStatus) && count($friendStatus) > 0)
-                return view('home', ['friendNames' => $friendNames, 'friendStatus' => $friendStatus]);
-            return view('home');
-        }
-    }
-    
     private function saveFriend(Request $request)
     {
         $checkExists = Friend::where('email', '=', Auth::user()->email)->
@@ -150,7 +129,7 @@ class HomeController extends Controller
         Friend::where('email', '=', $request->get('declineRequest'))->
             where('friendEmail', '=', Auth::user()->email)->delete();
     }
-    
+
     public function getUserCourses(String $req){
         //Select all Course ids that the user has.
         $courseIdsThatUserHas = User_course::where('email','=', Auth::user()->email)->get();
