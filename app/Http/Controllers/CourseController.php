@@ -42,24 +42,31 @@ class CourseController extends Controller
      * @param String $req
      * @return array|null
      */
+    public function getCourses(Request $request) {
+        $session = $request->session();
+
+        $couseArray = array();
+    }
+
     public function getUserCourses(String $req){
       //Select all Course ids that the user has.
       $courseIdsThatUserHas = User_course::where('email','=', Auth::user()->email)->get();
 
       //This will grab the courseTitles from the course ids that the user has.
-      if (count($courseIdsThatUserHas)){
+      if (isset($courseIdsThatUserHas)){
         foreach ($courseIdsThatUserHas as $value) {
           $courseTimeDaySection[] = Course::where('id','=',$value->course_id)->first();
-        }
 
-        foreach($courseTimeDaySection as $value) {
-          $courseTitleTeacher[] = Course_teacher::where('courseID', '=', $value->courseID)->first();
-        }
+          foreach($courseTimeDaySection as $value) {
+            $courseTitleTeacher[] = Course_teacher::where('courseID', '=', $value->courseID)->first();
+          }
 
-        if ($req == '1' ){
-          return $courseTitleTeacher;
-        } else {
-          return $courseTimeDaySection;
+            if ($req == '1' ){
+              return $courseTitleTeacher;
+            } else {
+              return $courseTimeDaySection;
+            }
+
         }
 
       } else {
@@ -73,8 +80,8 @@ class CourseController extends Controller
     public function index(){
 
           //Get user courses
-          $courseTitleTeacher = self::getUserCourses('1');
-          $courseTimeDaySection = self::getUserCourses('2');
+          $courseTitleTeacher = $this->getUserCourses('1');
+          $courseTimeDaySection = $this->getUserCourses('2');
 
           if ($courseTitleTeacher == null || $courseTimeDaySection == null){
             return view('manageCourses',
@@ -97,8 +104,8 @@ class CourseController extends Controller
     public function courses(Request $request){
 
     //Get user courses
-    $courseTitleTeacher = self::getUserCourses('1');
-    $courseTimeDaySection = self::getUserCourses('2');
+    $courseTitleTeacher = $this->getUserCourses('1');
+    $courseTimeDaySection = $this->getUserCourses('2');
 
 
       //SEARCH------------------------------------------------------------------
@@ -110,7 +117,7 @@ class CourseController extends Controller
           $teacherSearch = Course_teacher::where('teacher', 'ilike', '%' .
           $request->get('searchedContent') . '%')->get();
           //If there aren't any teachers name that match the search, no results to display.
-          if (count($teacherSearch) > 0){
+          if (isset($teacherSearch)){
             foreach($teacherSearch as $search){
             $timeDaySectionSearch[] = Course::where('courseID', '=', $search->courseID)->first();
           }
@@ -138,7 +145,7 @@ class CourseController extends Controller
           $classIdSearch = Classes::where('classNumber', '=', $request->get('searchedContent'))->get();
 
           //If there are not classIDs, then there will be no results.
-          if(count($classIdSearch) > 0){
+          if(isset($classIdSearch)){
             //Search for the courseID depending on the classID.
             $courseNumberTimeDaySection = Course::where('courseID', '=', $classIdSearch[0]->classID)->get();
             //Iterate through the courseIdSearch array to make an array of all the course titles/teacher names
@@ -167,7 +174,7 @@ class CourseController extends Controller
           $titleSearch = Course_teacher::where('title', 'ilike', '%' .
           $request->get('searchedContent') . '%')->get();
           //If there aren't any teachers name that match the search, no results to display.
-          if (count($titleSearch) > 0){
+          if (isset($titleSearch)){
             foreach($titleSearch as $search){
             $timeDaySectionSearch[] = Course::where('courseID', '=', $search->courseID)->first();
           }
@@ -195,8 +202,8 @@ class CourseController extends Controller
                 ->where('email', '=', Auth::user()->email)->delete();
 
                 //Get user courses
-                $courseTitleTeacher = self::getUserCourses('1');
-                $courseTimeDaySection = self::getUserCourses('2');
+                $courseTitleTeacher = $this->getUserCourses('1');
+                $courseTimeDaySection = $this->getUserCourses('2');
 
                 return view('manageCourses',
                            ['courseTitleTeacher' => $courseTitleTeacher,
@@ -209,21 +216,24 @@ class CourseController extends Controller
 
               $courseTimeDaySection = self::getUserCourses('2');
               $userHasCourse = true;
-
-              // self::debug($courseTimeDaySection[1]->id);
-              // self::debug($request->get('addCourseBtn'));
-
-              if (isset($courseTimeDaySection)){
+        
               //Check if user doesn't already have this course.
+              if (isset($courseTimeDaySection)){
+
               for($i = 0; $i < count($courseTimeDaySection); $i++){
-              if ($request->get('addCourseBtn') == $courseTimeDaySection[$i]->id){
-                //User already have the course.
-                return view('manageCourses',
-                           ['courseTitleTeacher' => $courseTitleTeacher,
-                            'courseTimeDaySection' => $courseTimeDaySection,
-                            'errorMessage' => 'Cannot add two of the same courses!']);
-                //$userHasCourse = false;
+
+                if ($request->get('addCourseBtn') == $courseTimeDaySection[$i]->id){
+                  //User already have the course.
+                  return view('manageCourses',
+                             ['courseTitleTeacher' => $courseTitleTeacher,
+                              'courseTimeDaySection' => $courseTimeDaySection,
+                              'errorMessage' => 'Cannot add two of the same courses!']);
+                }
+
+                }
               }
+
+
             }
 
           }
@@ -235,16 +245,14 @@ class CourseController extends Controller
               $courseAdd->course_id = $request->get('addCourseBtn');
               $courseAdd->save();
 
-              //Get user courses
-              $courseTitleTeacher = self::getUserCourses('1');
-              $courseTimeDaySection = self::getUserCourses('2');
+              //Get user courses -> update the display.
+              $courseTitleTeacher = $this->getUserCourses('1');
+              $courseTimeDaySection = $this->getUserCourses('2');
 
               return view('manageCourses',
                          ['courseTitleTeacher' => $courseTitleTeacher,
                           'courseTimeDaySection' => $courseTimeDaySection,
                           'errorMessage' => 'Course has been added!']);
-
-            }
 
     }// end of Course()
 
