@@ -140,6 +140,7 @@ class ApiController extends Controller
             $breaksFriend = 0;
             $j = 0;
             $name = array();
+            $data = array();
 
             for ($i = 0; $i < count($friendObjs); $i++) {
                 $friendCourse = Course::where('day', '=', $this->getDay($day))->
