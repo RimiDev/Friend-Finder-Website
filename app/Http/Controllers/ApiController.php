@@ -139,6 +139,7 @@ class ApiController extends Controller
         } else {
             $breaksFriend = 0;
             $j = 0;
+            $name = array();
 
             for ($i = 0; $i < count($friendObjs); $i++) {
                 $friendCourse = Course::where('day', '=', $this->getDay($day))->
@@ -167,6 +168,7 @@ class ApiController extends Controller
                 $j = 0;
 
             } // End for loop
+
             if (isset($friendObjs) && count($friendObjs) > 0) {
                 for ($k = 0; $k < count($name); $k++) {
                     $data[] = ['email' => $email[$k], 'name' => $name[$k]];
