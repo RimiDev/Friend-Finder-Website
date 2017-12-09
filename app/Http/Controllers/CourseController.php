@@ -216,7 +216,7 @@ class CourseController extends Controller
 
               $courseTimeDaySection = self::getUserCourses('2');
               $userHasCourse = true;
-        
+
               //Check if user doesn't already have this course.
               if (isset($courseTimeDaySection)){
 
@@ -236,7 +236,7 @@ class CourseController extends Controller
 
             }
 
-          }
+          
             //User doesn't have the course, add it!
 
               //Add user to database
