@@ -30,10 +30,18 @@ use Auth;
 class CourseController extends Controller
 {
 
+    /**
+     * CourseController constructor.
+     */
     public function __construct() {
         $this->middleware('auth');
     }
 
+    /**
+     * Returns the courses of the user
+     * @param String $req
+     * @return array|null
+     */
     public function getUserCourses(String $req){
       //Select all Course ids that the user has.
       $courseIdsThatUserHas = User_course::where('email','=', Auth::user()->email)->get();
@@ -81,7 +89,11 @@ class CourseController extends Controller
 
     } // end of index()
 
-
+    /**
+     * Fetches all the courses by teacher, day and teacher
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function courses(Request $request){
 
     //Get user courses
@@ -236,6 +248,10 @@ class CourseController extends Controller
 
     }// end of Course()
 
+    /**
+     * Shows a debug message
+     * @param $msg
+     */
     function debug($msg) {
        $msg = str_replace('"', '\\"', $msg); // Escaping double quotes
         echo "<script>console.log(\"$msg\")</script>";

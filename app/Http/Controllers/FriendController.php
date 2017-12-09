@@ -20,6 +20,11 @@ class FriendController extends Controller
         $this->middleware('auth');
     }
 
+    /**
+     * Displays the friend with his status
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function index(Request $request)
     {
         $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->get();
@@ -91,6 +96,11 @@ class FriendController extends Controller
         }
     }
 
+    /**
+     * Searches for friends
+     * @param Request $request
+     * @return mixed
+     */
     private function searchFriends(Request $request)
     {
         $searchNames = User::where(('name'), 'ilike', '%' . $request->get('name') . '%')->
@@ -101,6 +111,10 @@ class FriendController extends Controller
         return $searchNames;
     }
 
+    /**
+     * Sends a friend request and displays a received message
+     * @param Request $request
+     */
     private function saveFriend(Request $request)
     {
         $checkExists = Friend::where('email', '=', Auth::user()->email)->
@@ -124,6 +138,10 @@ class FriendController extends Controller
         }
     }
 
+    /**
+     * Adds a friend to the database
+     * @param Request $request
+     */
     private function acceptFriendRequest(Request $request)
     {
         Friend::where('email', '=', Auth::user()->email)->
@@ -133,6 +151,10 @@ class FriendController extends Controller
         where('friendEmail', '=', Auth::user()->email)->update(['status' => 'Confirmed']);
     }
 
+    /**
+     * Removes a friend request from the database
+     * @param Request $request
+     */
     private function declineFriendRequest(Request $request)
     {
         Friend::where('email', '=', Auth::user()->email)->

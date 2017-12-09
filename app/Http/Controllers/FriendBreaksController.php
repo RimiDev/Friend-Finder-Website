@@ -51,6 +51,7 @@ class FriendBreaksController extends Controller
             }
             )->orderby('startTime')->get();
 
+            // Compare the start time and end time to the start break and end break the user input of each course
             for ($course = 0; $course < count($friendCourse) - 1; $course++)
             {
                 $j++;

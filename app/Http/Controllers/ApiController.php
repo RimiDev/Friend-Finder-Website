@@ -27,9 +27,10 @@ class ApiController extends Controller
         if (!$valid) {
             return response()->json(['error' => 'invalid_credentials'], 401);
         } else {
+            // Get the confirmed friends
             $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->
-            where('status','=','Confirmed')->get();
-
+            where('status', '=', 'Confirmed')->get();
+            // Get the user objects of the friends
             foreach ($friendStatus as $friend)
                 $friendNames[] = User::where('email', '=', $friend->friendEmail)->first();
 
@@ -39,6 +40,7 @@ class ApiController extends Controller
                 }
             }
 
+            // Check if data has at least a row
             if (count($data) == 0) {
                 return response()->json(['email' => 'No friend found', 'name' => 'No friend found']);
             }
@@ -66,52 +68,45 @@ class ApiController extends Controller
 
         // Getting the friend object
         $friendStatus = Friend::where(('email'), '=', Auth::user()->email)->
-        where('status','=','Confirmed')->get();
+        where('status', '=', 'Confirmed')->get();
         // Getting the user object of the friend
         foreach ($friendStatus as $friend) {
             $friendNames[] = User::where('email', '=', $friend->friendEmail)->first();
-          }
+        }
 
-          foreach($friendNames as $theFriend)
-          {
-              $friendCourse = Course::where('sectionID', '=', $section)->
-              whereIn('id', function ($q) use ($theFriend)
-              {
-                  $q->select('course_id')->from('user_course')->
-                  where('email', '=', $theFriend->email);
-              })->get();
+        // Fetch the courses for each fried
+        foreach ($friendNames as $theFriend) {
+            $friendCourse = Course::where('sectionID', '=', $section)->
+            whereIn('id', function ($q) use ($theFriend) {
+                $q->select('course_id')->from('user_course')->
+                where('email', '=', $theFriend->email);
+            })->get();
 
+            // validate if the user has a course
+            if (count($friendCourse) == 0) {
+                return response()->json(['name' => 'No course found', 'email' => 'No course found']);
+            }
 
-              if (count($friendCourse) == 0) {
-                  return response()->json(['name' => 'No course found','email' => 'No course found']);
-              }
-
-
-                foreach ($friendCourse as $course)
-                {
-                    $courseTitle = Course_teacher::where('courseID', '=', $course->courseID)->
-                    where('title', '=', $coursename)->get();
-                }
-
-
-            if(isset($courseTitle) && count($courseTitle) > 0)
-            {
+            foreach ($friendCourse as $course) {
+                $courseTitle = Course_teacher::where('courseID', '=', $course->courseID)->
+                where('title', '=', $coursename)->get();
+            }
+            // Validates if the coursetitle is set and has at least 1
+            if (isset($courseTitle) && count($courseTitle) > 0) {
                 $friendsThatMatchName[] = $theFriend->name;
                 $friendsThatMatchEmail[] = $theFriend->email;
             }
-              $courseTitle = null;
-          }
-
-            if (isset($friendsThatMatchName) && count($friendsThatMatchName) > 0 && isset($friendsThatMatchEmail) && count($friendsThatMatchEmail) > 0)
-             {
-                  for($x = 0; $x < count($friendsThatMatchName); $x++)
-                      $data[] = ['name' => $friendsThatMatchName[$x], 'email' => $friendsThatMatchEmail[$x]];
-              }
-
-
-            return response()->json($data, 401);
+            $courseTitle = null;
         }
 
+        // validates the friend and email array and add it to the json response
+        if (isset($friendsThatMatchName) && count($friendsThatMatchName) > 0 && isset($friendsThatMatchEmail) && count($friendsThatMatchEmail) > 0) {
+            for ($x = 0; $x < count($friendsThatMatchName); $x++)
+                $data[] = ['name' => $friendsThatMatchName[$x], 'email' => $friendsThatMatchEmail[$x]];
+        }
+
+        return response()->json($data, 401);
+    }
 
 
     /**
@@ -126,7 +121,7 @@ class ApiController extends Controller
 
         // Gets each friend once
         $friendStatus = Friend::where('email', '=', Auth::user()->email)->
-        where('status','=','Confirmed')->get();
+        where('status', '=', 'Confirmed')->get();
         foreach ($friendStatus as $friend)
             $friendObjs[] = User::where('email', '=', $friend->friendEmail)->orderby('email')->first();
 
@@ -206,17 +201,16 @@ class ApiController extends Controller
             $friendCourse = Course::where('day', '=', $this->getDay($day))->
             whereIn('id', function ($q) use ($friendemail) {
                 $q->select('course_id')->from('user_course')->
-                where('email', '=', $friendemail);}
+                where('email', '=', $friendemail);
+            }
             )->orderby('startTime')->get();
 
             // Get the class number
-            foreach ($friendCourse as $c)
-            {
+            foreach ($friendCourse as $c) {
                 $class[] = Classes::where('classID', '=', $c->classID)->first();
             }
 
-            foreach ($class as $classname)
-            {
+            foreach ($class as $classname) {
                 $arrayclasses[] = $classname->classNumber;
             }
 
@@ -231,6 +225,7 @@ class ApiController extends Controller
             }
         } // End if
 
+        // Check if courses is set and bigger than 0
         if (isset($course) && count($course) > 0) {
             for ($k = 0; $k < count($course); $k++) {
                 $data[] = ['course' => $course[$k], 'section' => $section[$k]];
@@ -243,7 +238,6 @@ class ApiController extends Controller
 
         return response()->json($data, 401);
     }
-
 
     /**
      * Gets the day from the user and puts it as an integer
@@ -278,10 +272,10 @@ class ApiController extends Controller
     }
 
 
-
-    function debug($msg) {
-       $msg = str_replace('"', '\\"', $msg); // Escaping double quotes
+    function debug($msg)
+    {
+        $msg = str_replace('"', '\\"', $msg); // Escaping double quotes
         echo "<script>console.log(\"$msg\")</script>";
-}
+    }
 
 }

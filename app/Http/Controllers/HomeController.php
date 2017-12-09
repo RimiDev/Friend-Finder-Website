@@ -42,6 +42,11 @@ class HomeController extends Controller
 
     }
 
+    /**
+     * Searches, updates or save friend requests
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function searchSaveUpdateFriends(Request $request)
    {
        $courseTitleTeacher = $this->getUserCourses('1');
@@ -87,8 +92,11 @@ class HomeController extends Controller
                    'courseTimeDaySection' => $courseTimeDaySection]);
        }
    }
-   
 
+    /**
+     * Saves a friend request to the database
+     * @param Request $request
+     */
     private function saveFriend(Request $request)
     {
         $checkExists = Friend::where('email', '=', Auth::user()->email)->
@@ -112,6 +120,10 @@ class HomeController extends Controller
         }
     }
 
+    /**
+     * Adds a friend to the database (confirmed)
+     * @param Request $request
+     */
     private function acceptFriendRequest(Request $request)
     {
         Friend::where('email', '=', Auth::user()->email)->
@@ -121,6 +133,10 @@ class HomeController extends Controller
         where('friendEmail', '=', Auth::user()->email)->update(['status' => 'Confirmed']);
     }
 
+    /**
+     * Removes a friend request from the database
+     * @param Request $request
+     */
     private function declineFriendRequest(Request $request)
     {
         Friend::where('email', '=', Auth::user()->email)->
@@ -130,6 +146,11 @@ class HomeController extends Controller
             where('friendEmail', '=', Auth::user()->email)->delete();
     }
 
+    /**
+     * Gets the user courses
+     * @param String $req
+     * @return array|null
+     */
     public function getUserCourses(String $req){
         //Select all Course ids that the user has.
         $courseIdsThatUserHas = User_course::where('email','=', Auth::user()->email)->get();
