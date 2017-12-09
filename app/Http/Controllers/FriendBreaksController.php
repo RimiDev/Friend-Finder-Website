@@ -33,6 +33,8 @@ class FriendBreaksController extends Controller
     {
         $startBreak = $request->get('startName');
         $endBreak = $request->get('endName');
+        $breaksFriend = 0;
+        $j = 0;
 
         // Gets each friend once
         $friendStatus = Friend::where('email','=', Auth::user()->email)->get();
@@ -48,66 +50,35 @@ class FriendBreaksController extends Controller
                 where('email', '=', $friendObjs[$i]->email)->orderby('email');
             }
             )->orderby('startTime')->get();
-        }
 
-        //Get friend breaks
-        if (count($friendCourse) > 1)
-        {
-            for ($i = 0; $i < count($friendCourse) - 1; $i++)
+            // Compare the start time and end time to the start break and end break the user input of each course
+            for ($course = 0; $course < count($friendCourse) - 1; $course++)
             {
-                if(count($friendCourse) == 3)
-                    $i++;
-                if(count($friendCourse) == 4)
-                    $i = $i + 2;
-                if($friendCourse[$i]->endTime < $startBreak && $friendCourse[++$i]->startTime > $endBreak)
+                $j++;
+                if($friendCourse[$course]->endTime <= $startBreak && $friendCourse[$j]->startTime >= $endBreak)
                 {
-                    $i = $i - 1;
-                    $endFirstFriend = $friendCourse[$i]->endTime;
-                    if (++$i < count($friendCourse))
-                    {
-                        $startSecondFriend = $friendCourse[$i]->startTime;
-                        $i = $i - 1;
-                    }
-                    $breaksFriend[] = $endFirstFriend;
-                    $breaksFriend[] = $startSecondFriend;
+                    $name[] = $friendObjs[$i]->name;
+                    $breaksFriend++;
+                }
+                else if($friendCourse[$course]->endTime > $startBreak && $friendCourse[$course]->endTime < $endBreak)
+                {
+                    $name[] = $friendObjs[$i]->name;
+                    $breaksFriend++;
+                }
+                else if($friendCourse[$j]->startTime < $endBreak && $friendCourse[$j]->startTime > $startBreak)
+                {
+                    $name[] = $friendObjs[$i]->name;
+                    $breaksFriend++;
                 }
             }
+            $j = 0;
+
         }
 
         // Check if friends have break
-        if(isset($breaksFriend) && count($breaksFriend) > 0)
-            return view('findFriendBreaks', ["friendNames" => $friendObjs, "breaksFriend" => $breaksFriend]);
+        if($breaksFriend > 0)
+            return view('findFriendBreaks', ["friendNames" => $name]);
         return view('findFriendBreaks');
-    }
-
-    /**
-     * Checks if all the fields from the user are valid inputs
-     * @return bool
-     */
-    private function validateFields()
-    {
-        $valid = false;
-        if ($_POST['submitSearchBreaks']) {
-            if (isset($_POST['dayBreakSearch']) & isset($_POST['startTimeSearch']) & isset($_POST['endTimeSearch'])) {
-                if (!isEmpty($_POST['dayBreakSearch']) & !isEmpty($_POST['startTimeSearch']) & !isEmpty($_POST['endTimeSearch'])) {
-                    if (ctype_alpha($_POST['dayBreakSearch']) & is_numeric($_POST['startTimeSearch']) & is_numeric($_POST['endTimeSearch'])) {
-                        if (($_POST['startTimeSearch'] > 0 & $_POST['startTimeSearch'] < 2400) &
-                            ($_POST['endTimeSearch'] > $_POST['startTimeSearch'] & $_POST['endTimeSearch'] < 2400)) {
-                            $valid = true;
-                        } else {
-                            $valid = false;
-                        }
-                    } else {
-                        $valid = false;
-                    }
-                } else {
-                    $valid = false;
-                }
-            } else {
-                $valid = false;
-            }
-        }
-        return $valid;
     }
 
     /**

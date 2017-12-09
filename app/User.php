@@ -27,11 +27,17 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function friends()
     {
         return $this->hasMany(Friend::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function courses() {
         return $this->hasMany(Course::class);
     }

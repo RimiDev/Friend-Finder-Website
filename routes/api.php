@@ -13,6 +13,11 @@ use Illuminate\Http\Request;
 |
 */
 
+Route::get('api/allfriends', 'ApiController@allfriends');
+Route::get('api/coursefriends', 'ApiController@coursefriends');
+Route::get('api/friendbreaks', 'ApiController@friendbreaks');
+Route::get('api/whereisfriend', 'ApiController@whereisfriend');
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });

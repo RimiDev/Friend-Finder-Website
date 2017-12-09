@@ -15,11 +15,14 @@ class Friend extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'email', 'status', 'friendEmail'
+        'user_id', 'email', 'status', 'friendEmail',
     ];
 
     public $timestamps = false;
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function user()
     {
         return $this->belongsTo(User::class);
